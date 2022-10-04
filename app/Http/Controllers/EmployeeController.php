@@ -216,13 +216,12 @@ class EmployeeController extends Controller
         {
             if($request->session()->get('user_type_id') == 1)
             {
+                
                 $request->validate([
                     'name' => 'required',
                     'gender' => 'required',
                     'mobile' => 'required|string|min:10',
                     'pwd' => 'required',
-                    'date_of_joining' => 'date',
-                    'activeStatus' => 'required | integer',
                     'assignAdmin' => 'required'
                 ]);
             }
@@ -233,17 +232,15 @@ class EmployeeController extends Controller
                     'gender' => 'required',
                     'mobile' => 'required|string|min:10',
                     'pwd' => 'required',
-                    'date_of_joining' => 'date',
-                    'activeStatus' => 'required | integer',
                 ]);
             }
         }
-      
+        
        $name=$request->name;
        $gender=$request->gender;
        $mobile=$request->mobile;
        $pwd=$request->pwd;
-       $date_of_joining=date('Y-m-d',strtotime($request->date_of_joining));
+      
        $activeStatus=$request->activeStatus;
        if($request->session()->get('user_type_id') == 1)
        {
@@ -255,7 +252,8 @@ class EmployeeController extends Controller
        }
        
        $email=$request->email;
-        $user=DB::table('employees')->where('email', $email)->update(array('name' => $name,'gender' => $gender,'phone' => $mobile,'password' => $pwd,'date_of_joining' => $date_of_joining,'active_status' => $activeStatus,'assignAdmin' => $assignAdmin)); 
+        $user=DB::table('employees')->where('email', $email)->update(array('name' => $name,'gender' => $gender,'phone' => $mobile,'password' => $pwd,'assignAdmin' => $assignAdmin)); 
+      
         if($user)
         {
             return back()->with('success','Successfully Updated');    

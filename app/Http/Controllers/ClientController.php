@@ -100,8 +100,56 @@ class ClientController extends Controller
     }
     public function terminateclients($email,Request $request)
     {
-        Client::where('email',$email)->where('assignAdmin',$request->session()->get('email'))->update(['terminatestatus' => 1]);
-        return redirect('/viewClients/');
+        if($request->session()->exists('user_type'))
+        {
+            if($request->session()->get('user_type_id') == 1)
+            {
+                $client=Client::where('email',$email)->where('terminatestatus',1)->count();
+                if($client > 0)
+                {
+                    Client::where('email',$email)->update(['terminatestatus' => 0]);
+                }
+                else
+                {
+                    Client::where('email',$email)->update(['terminatestatus' => 1]);
+                }
+
+                
+            }
+            else if($request->session()->get('user_type_id') == 2)
+            {
+                $client=Client::where('email',$email)->where('assignAdmin',$request->session()->get('email'))->where('terminatestatus',1)->count();
+                if($client > 0)
+                {
+                    Client::where('email',$email)->where('assignAdmin',$request->session()->get('email'))->update(['terminatestatus' => 0]);
+                }
+                else
+                {
+                    Client::where('email',$email)->where('assignAdmin',$request->session()->get('email'))->update(['terminatestatus' => 1]);
+                }
+                
+            }
+            else if($request->session()->get('user_type_id') == 3)
+            {
+                $client=Client::where('email',$email)->where('assignAdmin',$request->session()->get('assignAdmin'))->where('terminatestatus',1)->count();
+                if($client > 0)
+                {
+                    Client::where('email',$email)->where('assignAdmin',$request->session()->get('assignAdmin'))->update(['terminatestatus' => 0]);
+                }
+                else
+                {
+                    Client::where('email',$email)->where('assignAdmin',$request->session()->get('assignAdmin'))->update(['terminatestatus' => 1]);
+                }
+                
+            }
+            return redirect('/viewClients/');
+        }
+        else
+        {
+            return redirect('/login/');
+        }
+        
+        
     }
     public function reinvest($email,$id,Request $request)
     {
@@ -305,7 +353,6 @@ class ClientController extends Controller
                 'email' => 'required|email|unique:users|unique:clients|unique:employees|unique:secondaryadmins',
                 'gender' => 'required',
                 'mobile' => 'required|string|min:10',
-                'pwd' => 'required',
                 'investdate' => 'required | date',
                 'interestrate' => 'required | integer',
                 'investamount' => 'required',
@@ -314,6 +361,7 @@ class ClientController extends Controller
                 'assignAdmin' => 'required|string',
                 'assignEmployee' => 'required|string',
             ]);
+           
         }
         else if($request->session()->get('user_type_id') == 2)
         {
@@ -322,7 +370,6 @@ class ClientController extends Controller
                 'email' => 'required|email|unique:clients',
                 'gender' => 'required',
                 'mobile' => 'required|string|min:10',
-                'pwd' => 'required',
                 'investdate' => 'required | date',
                 'interestrate' => 'required | integer',
                 'investamount' => 'required',
@@ -387,6 +434,7 @@ class ClientController extends Controller
         $client->enteredmailid=$request->session()->get('email');
         $client->enteredid=$request->session()->get('loginId');
         $client->usertypeid=$request->session()->get('user_type_id');
+        
         $res=$client->save();
         $investmentRecords=new investment();
         if($request->session()->get('user_type_id') == 1)
@@ -543,7 +591,6 @@ class ClientController extends Controller
             'name' => 'required',
             'gender' => 'required',
             'client_phone' => 'required|string|min:10',
-            'pwd' => 'required',
             'activeStatus' => 'required | integer',
             'assignAdmin' => 'required|string',
             'assignEmployee' =>'required|string',
@@ -553,7 +600,6 @@ class ClientController extends Controller
         $gender=$request->gender;
         $client_phone=$request->client_phone;
         $client_address=$request->client_address;
-        $pwd=$request->pwd;
         $lockperiod=$request->lockperiod;
         $returns=$request->returns;
         $investamount=$request->investamount;
@@ -562,7 +608,7 @@ class ClientController extends Controller
         $activeStatus=$request->activeStatus;
         $assignAdmin=$request->assignAdmin;
         $assignEmployee=$request->assignEmployee;
-        $user=DB::table('clients')->where('email', $email)->update(array('client_name' => $name,'client_address' => $client_address,'pwd' => $pwd,'client_phone' => $client_phone,'gender' => $gender,'activeStatus' => $activeStatus,'assignAdmin' => $assignAdmin,'assignEmployee' => $assignEmployee)); 
+        $user=DB::table('clients')->where('email', $email)->update(array('client_name' => $name,'client_address' => $client_address,'client_phone' => $client_phone,'gender' => $gender,'activeStatus' => $activeStatus,'assignAdmin' => $assignAdmin,'assignEmployee' => $assignEmployee)); 
 
         if($user)
         {

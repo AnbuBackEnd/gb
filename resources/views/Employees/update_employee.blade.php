@@ -49,7 +49,7 @@
             <div class="card-body">
               <h5 class="card-title">Update Employees</h5>
               <!-- General Form Elements -->
-              <form method="post" action="{{ route('update-employee-post') }}">
+              <form method="post" class="formclass" action="{{ route('update-employee-post') }}">
                   @csrf
                     @if(Session::has('success'))
                     <div class="alert alert-success">{{ Session::get('success') }}</div>
@@ -65,7 +65,7 @@
                     </div>
                     <div class="col-sm-8">
                       <input type="text" class="form-control" name="name" id="name" value="{{ $row['name'] }}" autocomplete="off">
-                      <span class="text-danger">@error('name') {{$message}}@enderror</span>
+                      <span class="text-danger adminnameerror">@error('name') {{$message}}@enderror</span>
                     </div>
               </div>
               <div class="row mb-3">
@@ -112,8 +112,8 @@
                 <label class="col-form-label">Mobile No</label>
                 </div>
                   <div class="col-sm-8">
-                  <input type="text" class="form-control" name="mobile" id="mobile" value="{{ $row['phone'] }}" autocomplete="off">
-                    <span class="text-danger">@error('mobile') {{$message}}@enderror</span> 
+                  <input type="number" class="form-control" name="mobile" id="mobile" value="{{ $row['phone'] }}" autocomplete="off">
+                    <span class="text-danger adminmobileerror">@error('mobile') {{$message}}@enderror</span> 
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -122,7 +122,7 @@
                 </div>
                   <div class="col-sm-8">
                     <input type="text" class="form-control" name="pwd" id="pwd" value="{{ $row['pwd'] }}" autocomplete="off">
-                    <span class="text-danger">@error('pwd') {{$message}}@enderror</span>
+                    <span class="text-danger passworderror">@error('pwd') {{$message}}@enderror</span>
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -130,7 +130,7 @@
                   <label for="inputDate" class="col-form-label">Date of Joining</label>
                   </div>
                     <div class="col-sm-8">
-                      <input type="date" class="form-control" name="date_of_joining" id="date_of_joining" value="{{ $row['date_of_joining'] }}" autocomplete="off">
+                      <input type="date" class="form-control" name="date_of_joining" id="date_of_joining" value="{{ $row['date_of_joining'] }}" autocomplete="off" disabled>
                       <span class="text-danger">@error('date_of_joining') {{$message}}@enderror</span>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
                
                 <div class="row mb-3">
                   <div class="col-sm-12">
-                    <center><button type="submit" class="btn btn-primary">Update Admin</button>
+                    <center><button type="button" class="btn btn-primary updateemployee">Update Emloyee</button>
                     <button type="button" class="btn btn-danger backtoview">Back To View</button></center>
                   </div>
                 </div>
@@ -204,12 +204,83 @@
   <script src="{{ asset('assets/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('assets/vendor/php-email-form/validate.js') }}"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 
   <!-- Template Main JS File -->
   <script src="{{ asset('assets/js/main.js') }}"></script>
   <script>
 $(document).ready(function()
 {
+  $('.updateemployee').click(function()
+  {
+    swal({
+              title: `Are you sure you want to confirm to Edit Employee...?`,
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+          })
+          .then((addemployee) => {
+            if (addemployee) {
+              $('.formclass').submit();
+            }
+          });
+   
+  });
+  $('#name').keyup(function()
+  {
+    if($(this).val().length == 0)
+    {
+      $('.adminnameerror').html('<font size="2">Name is Required</font>');
+    }
+    else
+    {
+      $('.adminnameerror').html('');
+    }
+  });
+  $('#mobile').keyup(function()
+  {
+    if($(this).val() != '')
+    {
+      if($(this).val().length > 10 || $(this).val().length < 10)
+      {
+        $('.adminmobileerror').html('<font size="2">10 Digits only Allowed to Mobile Number</font>');
+        $('.addemployee').attr('disabled',true);
+      }
+      else
+      {
+        $('.adminmobileerror').html('');
+        $('.addemployee').attr('disabled',false);
+      }
+    
+    }
+    else
+    {
+      $('.adminmobileerror').html('<font size="2">Mobile No Not Entered</font>');
+        $('.addemployee').attr('disabled',true);
+    }
+  });
+  $('#pwd').keyup(function()
+  {
+      if($(this).val() != '')
+      {
+          if($(this).val().length < 8)
+          {
+            $('.passworderror').html('<font size="2">Password Must be 8 Characters</font>');
+            $('.addemployee').attr('disabled',true);
+          }
+          else
+          {
+            $('.passworderror').html('');
+          $('.addemployee').attr('disabled',false);
+          }
+          
+      }
+      else
+      {
+        $('.passworderror').html('<font size="2">Password not Entered</font>');
+            $('.addemployee').attr('disabled',true);
+      }
+  });
   $('.backtoview').click(function()
   {
     window.location.href = "{{URL::to('viewEmployees')}}";

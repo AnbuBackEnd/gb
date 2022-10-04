@@ -79,7 +79,7 @@
                     </div>
                     <div class="col-sm-8">
                       <input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}" autocomplete="off">
-                      <span class="text-danger">@error('name') {{$message}}@enderror</span>
+                      <span class="text-danger adminnameerror">@error('name') {{$message}}@enderror</span>
                     </div>
               </div>
               <div class="row mb-3">
@@ -88,7 +88,7 @@
                     </div>
                     <div class="col-sm-8">
                       <input type="email" class="form-control" name="email" id="email" value="{{ old('email') }}" autocomplete="off">
-                      <span class="text-danger">@error('email') {{$message}}@enderror</span>
+                      <span class="text-danger adminemailerror">@error('email') {{$message}}@enderror</span>
                     </div>
               </div>
               <div class="row mb-3">
@@ -97,7 +97,7 @@
                     </div>
                     <div class="col-sm-8">
                     <textarea class="form-control" style="height: 100px" name="client_address" id="client_address">{{old('client_address')}}</textarea>
-                      <span class="text-danger">@error('client_address') {{$message}}@enderror</span>
+                      <span class="text-danger adminaddresserror">@error('client_address') {{$message}}@enderror</span>
                     </div>
               </div>
              
@@ -130,7 +130,7 @@
                 </div>
                   <div class="col-sm-8">
                   <input type="number" class="form-control" name="mobile" id="mobile" value="{{ old('mobile') }}" autocomplete="off">
-                    <span class="text-danger">@error('mobile') {{$message}}@enderror</span>
+                    <span class="text-danger adminmobileerror">@error('mobile') {{$message}}@enderror</span>
                   </div>
             </div>
             <div class="row mb-3">
@@ -138,7 +138,7 @@
                 <label class="col-form-label">Investment Amount</label>
                 </div>
                   <div class="col-sm-8">
-                  <input type="text" class="form-control" name="investamount" id="investamount" value="{{ old('investamount') }}" autocomplete="off">
+                  <input type="number" class="form-control" name="investamount" id="investamount" value="{{ old('investamount') }}" autocomplete="off">
                     <span class="text-danger investamounterror">@error('investamount') {{$message}}@enderror</span>
                   </div>
             </div>
@@ -159,7 +159,7 @@
                 </div>
                   <div class="col-sm-8">
                   <input type="number" class="form-control" name="tenure" id="tenure" value="{{ old('tenure') }}" autocomplete="off">                                                            
-                    <span class="text-danger">@error('tenure') {{$message}}@enderror</span>
+                    <span class="text-danger tenureperioderror">@error('tenure') {{$message}}@enderror</span>
                   </div>
             </div>
             
@@ -225,6 +225,7 @@
                     <span class="text-danger">@error('returns') {{$message}}@enderror</span>
                   </div>
             </div>
+          
            
             
           
@@ -306,6 +307,110 @@
   <script>
     var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http) {
+  $('#name').keyup(function()
+  {
+    if($(this).val().length == 0)
+    {
+      $('.adminnameerror').html('<font size="2">Name is Required</font>');
+    }
+    else
+    {
+      $('.adminnameerror').html('');
+    }
+  });
+  $('#client_address').keyup(function()
+  {
+    if($(this).val().length == 0)
+    {
+      $('.adminaddresserror').html('<font size="2">Address is Required</font>');
+    }
+    else
+    {
+      $('.adminaddresserror').html('');
+    }
+  });
+  $('#mobile').keyup(function()
+  {
+    if($(this).val() != '')
+    {
+      if($(this).val().length > 10 || $(this).val().length < 10)
+      {
+        $('.adminmobileerror').html('<font size="2">10 Digits only Allowed to Mobile Number</font>');
+        $('.addprimaryadmin').attr('disabled',true);
+      }
+      else
+      {
+        $('.adminmobileerror').html('');
+        $('.addprimaryadmin').attr('disabled',false);
+      }
+    
+    }
+    else
+    {
+      $('.adminmobileerror').html('<font size="2">Mobile No Not Entered</font>');
+        $('.addprimaryadmin').attr('disabled',true);
+    }
+  });
+  $('#pwd').keyup(function()
+  {
+      if($(this).val() != '')
+      {
+          if($(this).val().length < 8)
+          {
+            $('.passworderror').html('<font size="2">Password Must be 8 Characters</font>');
+            $('.addprimaryadmin').attr('disabled',true);
+          }
+          else
+          {
+            $('.passworderror').html('');
+          $('.addprimaryadmin').attr('disabled',false);
+          }
+          
+      }
+      else
+      {
+        $('.passworderror').html('<font size="2">Password not Entered</font>');
+            $('.addprimaryadmin').attr('disabled',true);
+      }
+  });
+  $('#email').keyup(function()
+  {
+    if($(this).val() != '')
+    {
+     
+      var reg=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test($(this).val());
+      if(reg == true)
+      {
+        $('.adminemailerror').html('');
+        $('.addprimaryadmin').attr('disabled',false);
+        $http.get("http://127.0.0.1:8000/validemail/"+$('#email').val()).then(function(response) {
+          if(response.data[0] == 0)
+          {
+            $('.adminemailerror').html('<font size="2">Email Already Exists</font>');
+            $('.addprimaryadmin').attr('disabled',true);
+          }
+          else
+          {
+            $('.adminemailerror').html('');
+            $('.addprimaryadmin').attr('disabled',false);
+          }
+        });
+      }
+      else
+      {
+        $('.adminemailerror').html('<font size="2">Invalid Email ID</font>');
+        $('.addprimaryadmin').attr('disabled',true);
+      }
+    }
+    else
+    {
+      $('.adminemailerror').html('<font size="2">Email Not Entered..</font>');
+        $('.addprimaryadmin').attr('disabled',false);
+    }
+   
+
+
+  });
   $http.get("http://127.0.0.1:8000/adminlist").then(function(response) {
     $scope.adminlistcount = response.data.length;
     $scope.adminlist=response.data;
@@ -321,7 +426,6 @@ app.controller('myCtrl', function($scope,$http) {
   $(document).ready(function(){
     $('.addclients').click(function()
     {
-      alert($scope.primaryadminmodel.length);
       swal({
               title: 'Are you sure you want to confirm to Add Client...'+$('#clientcode').val()+'?',
               icon: "warning",
@@ -345,8 +449,20 @@ app.controller('myCtrl', function($scope,$http) {
           }
           else
           {
-            $('.investamounterror').html('');
-            $('.addclients').attr('disabled',false);
+            if(parseInt($('#tenure').val()) > 0 && parseInt($('#interestrate').val()) > 0)
+            {
+              investamount=parseFloat($(this).val());
+              tenure=parseInt($('#tenure').val());
+              interestrate=parseInt($('#interestrate').val());
+              var returnamount_monthly=((investamount/100)*interestrate);
+              $('#returns_monthly').val(returnamount_monthly);
+              var returnamount_yearly=parseInt(returnamount_monthly)*tenure;  
+              $('#returns_overall').val(returnamount_yearly);
+              $('#overallreturnamount').val(returnamount_yearly+investamount);
+              $('.investamounterror').html('');
+              $('.addclients').attr('disabled',false);
+            }
+           
           }
       }
     });

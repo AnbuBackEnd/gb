@@ -233,15 +233,13 @@ class AdminController extends Controller
             'gender' => 'required|integer',
             'mobile' => 'required|numeric|min:10',
             'pwd' => 'required',
-            'activeStatus' => 'required | integer'
         ]);
        $name=$request->name;
        $gender=$request->gender;
        $mobile=$request->mobile;
        $pwd=$request->pwd;
-       $activeStatus=$request->activeStatus;
        $email=$request->email;
-        $user=DB::table('secondaryadmins')->where('email', $email)->update(array('name' => $name,'gender' => $gender,'phone' => $mobile,'pwd' => $pwd,'activeStatus' => $activeStatus));
+        $user=DB::table('secondaryadmins')->where('email', $email)->update(array('name' => $name,'gender' => $gender,'phone' => $mobile,'pwd' => $pwd));
         if($user)
         {
             return back()->with('success','Successfully Updated');    

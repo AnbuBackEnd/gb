@@ -134,27 +134,33 @@
           
             <h5 class="card-title">Investment Records</h5>
               <!-- Default Table -->
+              <?php $counting=0; ?>
               @if($investmentrecords != false)
               <table class="table table-bordered">
                 <thead>
               
                 <tr class="textcolor_head">
+                    <th scope="col">S.NO</th>
                     <th scope="col">Date</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Tenure Period</th>
                     <th scope="col">Maturity Period</th>
                     <th scope="col">Interest Rate</th>
+                    <th scope="col">Status</th>
                     <th scope="col"><center>Action</center></th>
                   </tr>
               @foreach($investmentrecords as $row)
+              <?php $counting=$counting+1; ?>
               <?php $firstmonthdate = date('Y-m-d', strtotime($row['invest_date']. ' + 1 months'));?>
               <tr class="textcolor_body">
+              <td scope="col"><center><?php echo $counting; ?></center></td>
               <td scope="col"><?php echo date('d-m-Y',strtotime($row['invest_date'])); ?></td>
                     <td scope="col"><?php echo number_format($row['invest_amount'],2); ?></td>
                     <td scope="col"><?php echo $row['tenure']; ?> Months</td>
                     <td scope="col"><?php echo $row['locked_period']; ?> Months</td>
                     <td scope="col"><?php echo $row['interestrate']; ?>%</td>
-                    <td scope="col"><center>&nbsp;<?php if($firstmonthdate < date('Y-m-d')){ ?><A href="#{{ $row['email']}}#{{$row['_id']}}" class="deletebuttoninvest"><span class="badge bg-danger">Delete</span></A><?php } ?><?php if(date('Y-m-d') >= date('Y-m-d',strtotime($row['maturitydate'])) && $row['paystatus'] != 1){ ?>&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="pay_or_reinvest"><span class="badge bg-danger">Pay</span></A>&nbsp;&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="reinvest"><span class="badge bg-primary">Re Investing</span></A><?php } else { if($row['investmentStatus'] == 'paid'){ echo "Paid on ".date('d-m-Y',strtotime($row['paydate']));} else if($row['investmentStatus'] == 'reinvested'){ echo "Re Invested"; }  } ?></center></td>
+                    <td scope="col"><?php if($row['approval'] == 1){ ?><font color="green">Approved</font><?php } else if($row['approval'] == 2){ ?><font color="red">Rejected</font><?php } else { ?><font color="blue">Pending</font><?php } ?></td>
+                    <td scope="col"><center>&nbsp;<?php if($row['approval'] == 1){ ?><span class="badge bg-danger">View Document</span><?php } ?><?php if($firstmonthdate < date('Y-m-d')){ ?><A href="#{{ $row['email']}}#{{$row['_id']}}" class="deletebuttoninvest"><span class="badge bg-danger">Delete</span></A><?php } ?><?php if(date('Y-m-d') >= date('Y-m-d',strtotime($row['maturitydate'])) && $row['paystatus'] != 1){ ?>&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="pay_or_reinvest"><span class="badge bg-danger">Pay</span></A>&nbsp;&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="reinvest"><span class="badge bg-primary">Re Investing</span></A><?php } else { if($row['investmentStatus'] == 'paid'){ echo "Paid on ".date('d-m-Y',strtotime($row['paydate']));} else if($row['investmentStatus'] == 'reinvested'){ echo "Re Invested"; }  } ?></center></td>
                     
                   </tr>
               @endforeach

@@ -123,15 +123,7 @@
                   </div>
             </div>
             
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                <label for="inputNumber" class="col-form-label">Password</label>
-                </div>
-                  <div class="col-sm-8">
-                    <input type="text" class="form-control" name="pwd" id="pwd" value="{{ $row['pwd'] }}" autocomplete="off">
-                    <span class="text-danger">@error('pwd') {{$message}}@enderror</span>
-                  </div>
-            </div>
+          
                
             <div class="row mb-3">
                     <div class="col-sm-4">

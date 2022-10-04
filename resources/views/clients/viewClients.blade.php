@@ -61,6 +61,7 @@
               <table class="table table-bordered">
                 <thead>
                   <tr>
+                    <th scope="col">Client Code</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     
@@ -76,6 +77,7 @@
                   @foreach($data as $dt)
 
                   <tr>
+                    <td>{{ $dt['client_code'] }}</td>
                     <td>{{ $dt['client_name'] }}</td>
                     <td>{{ $dt['email'] }}</td>
                    
@@ -83,7 +85,7 @@
                     <!-- <td><A href="{{url('updateclients/'.$dt['email']) }}"><button class="btn btn-xs">Edit</button></A></td> -->
                     <!-- <td><A href="{{url('viewBriefClients/'.$dt['email']) }}"><button class="btn btn-xs">View</button></A></td> -->
                     <td><center>@if($dt['terminatestatus'] != 1)<A href="{{url('processclients/'.$dt['email']) }}"><span class="badge bg-info">Process</span></A>@endif</center></td>
-                    <td><center>@if($dt['terminatestatus'] != 1)<A href="#<?php echo $dt['email']; ?>" class="terminateclass"><span class="badge bg-danger">Terminate</span></A>@else<font color="red">Terminated</font>  @endif</center></td>
+                    <td><center>@if($dt['terminatestatus'] != 1)<A href="#<?php echo $dt['email'].'#'.$dt['terminatestatus']; ?>" class="terminateclass"><span class="badge bg-danger">Terminate</span></A>@else<A href="#<?php echo $dt['email'].'#'.$dt['terminatestatus']; ?>" class="terminateclass"><span class="badge bg-danger">Revert Terminate</span></A>  @endif</center></td>
                     
                   </tr>
                   @endforeach
@@ -127,8 +129,17 @@ $(document).ready(function()
   $('.terminateclass').click(function()
   {
     var email=$(this).attr('href').split('#')[1];
+    var terminalstatus=$(this).attr('href').split('#')[2];
+    if(terminalstatus == 1)
+    {
+      var msg='Do You want to Revert Termination ...';
+    }
+    else
+    {
+      var msg='Do You want to  Termination ...';
+    }
     swal({
-              title: `Do You want to Terminate a Client...?`,
+              title: msg,
               icon: "warning",
               buttons: true,
               dangerMode: true,

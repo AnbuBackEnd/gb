@@ -43,14 +43,14 @@
   @include('others.sidemenu');
   <main id="main" class="main">
     <section class="section">
-      <div class="row">
+      <div class="row" ng-app="myApp" ng-controller="myCtrl">
       <div class="col-lg-3"></div>
         <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Update Primary Admin</h5>
               <!-- General Form Elements -->
-              <form method="post"  action="{{ route('update-admin-post') }}">
+              <form method="post" class="formclass" action="{{ route('update-admin-post') }}">
                   @csrf
                     @if(Session::has('success'))
                     <div class="alert alert-success">{{ Session::get('success') }}</div>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-sm-8">
                       <input type="text" class="form-control" name="name" id="name" value="{{ $row['name'] }}" autocomplete="off">
-                      <span class="text-danger">@error('name') {{$message}}@enderror</span>
+                      <span class="text-danger adminnameerror">@error('name') {{$message}}@enderror</span>
                     </div>
               </div>
               <div class="row mb-3">
@@ -84,7 +84,7 @@
                     </div>
                     <div class="col-sm-8">
                       <input type="text" class="form-control" name="safasf" id="asfasfas" value="{{ $row['email'] }}" autocomplete="off" disabled>
-                      <span class="text-danger">@error('email') {{$message}}@enderror</span>
+                      <span class="text-danger adminemailerror">@error('email') {{$message}}@enderror</span>
                     </div>
               </div>
               <fieldset class="row mb-3">
@@ -123,7 +123,7 @@
                 </div>
                   <div class="col-sm-8">
                   <input type="text" class="form-control" name="mobile" id="mobile" value="{{ $row['phone'] }}" autocomplete="off">
-                    <span class="text-danger">@error('mobile') {{$message}}@enderror</span> 
+                    <span class="text-danger adminmobileerror">@error('mobile') {{$message}}@enderror</span> 
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -133,7 +133,7 @@
                  
                   <div class="col-sm-8">
                     <input type="text" class="form-control" name="pwd" id="pwd" value="{{ $row['pwd'] }}" autocomplete="off">
-                    <span class="text-danger">@error('pwd') {{$message}}@enderror</span>
+                    <span class="text-danger passworderror">@error('pwd') {{$message}}@enderror</span>
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -146,30 +146,11 @@
                       <span class="text-danger">@error('date_of_joining') {{$message}}@enderror</span>
                     </div>
                 </div>
-                <div class="row mb-3">
-                <div class="col-sm-4">
-                <label class="col-form-label">Active Status</label>
-                </div>
-                  
-                  <div class="col-sm-8">
-                    <select class="form-select" aria-label="Default select example" name="activeStatus" id="activeStatus">
-                      @if($row['activeStatus'] == 1)
-
-                      <option value="1" selected>Active</option>
-                      <option value="2">In Active</option>
-                      @else 
-                      <option value="1">Active</option>
-                      <option value="2" selected>In Active</option>
-                      @endif
-                      
-                    
-                    </select>
-                  </div>
-                </div>
+               
               @endforeach
                 <div class="row mb-3">
                   <div class="col-sm-12">
-                    <center><button type="submit" class="btn btn-primary">Update Admin</button></center>
+                    <center><button type="button" class="btn btn-primary updateadminsubmit">Update Admin</button></center>
                   </div>
                 </div>
 
@@ -200,11 +181,88 @@
   <script src="{{ asset('assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ asset('assets/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('assets/vendor/php-email-form/validate.js') }}"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js') }}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
   <!-- Template Main JS File -->
   <script src="{{ asset('assets/js/main.js') }}"></script>
+  <script>
+   var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope,$http) {
+  $('#name').keyup(function()
+  {
 
+    if($(this).val().length == 0)
+    {
+      $('.adminnameerror').html('<font size="2">Name is Required</font>');
+    }
+    else
+    {
+      $('.adminnameerror').html('');
+    }
+  });
+  $('#mobile').keyup(function()
+  {
+    if($(this).val() != '')
+    {
+      if($(this).val().length > 10 || $(this).val().length < 10)
+      {
+        $('.adminmobileerror').html('<font size="2">10 Digits only Allowed to Mobile Number</font>');
+        $('.updateadminsubmit').attr('disabled',true);
+      }
+      else
+      {
+        $('.adminmobileerror').html('');
+        $('.updateadminsubmit').attr('disabled',false);
+      }
+    
+    }
+    else
+    {
+      $('.adminmobileerror').html('<font size="2">Mobile No Not Entered</font>');
+        $('.updateadminsubmit').attr('disabled',true);
+    }
+  });
+  $('#pwd').keyup(function()
+  {
+      if($(this).val() != '')
+      {
+          if($(this).val().length < 8)
+          {
+            $('.passworderror').html('<font size="2">Password Must be 8 Characters</font>');
+            $('.updateadminsubmit').attr('disabled',true);
+          }
+          else
+          {
+            $('.passworderror').html('');
+          $('.updateadminsubmit').attr('disabled',false);
+          }
+          
+      }
+      else
+      {
+        $('.passworderror').html('<font size="2">Password not Entered</font>');
+            $('.updateadminsubmit').attr('disabled',true);
+      }
+  });
+  $('.updateadminsubmit').click(function()
+  {
+    swal({
+              title: `Are you sure you want to confirm to Update a Primary Admin...?`,
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+          })
+          .then((updateadminsubmit) => {
+            if (updateadminsubmit) {
+              $('.formclass').submit();
+            }
+          });
+   
+  });
+});
+</script>
 </body>
 
 </html>

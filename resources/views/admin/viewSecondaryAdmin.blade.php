@@ -29,7 +29,7 @@
   <!-- Template Main CSS File -->
   <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.css">
+  
 
 
   <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/> -->
@@ -37,7 +37,6 @@
 <style>
 table, th, td,tr {
   border: 1px solid #2d5900;
-
 } 
 .textcolor_head
 {
@@ -145,11 +144,10 @@ type="text/javascript"
 charset="utf8"
 src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script> -->
 <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.js"></script>
+
 <script>
 $(document).ready(function()
 {
- 
   $('#primaryadmin').DataTable({
     responsive:true
   });

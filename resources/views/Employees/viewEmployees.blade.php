@@ -25,10 +25,25 @@
   <link href="{{ asset('assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-
+<style>
+table, th, td,tr {
+  border: 1px solid #2d5900;
+} 
+.textcolor_head
+{
+  color: black;
+  font-size: 15px;
+}
+.textcolor_body
+{
+  color: black;
+  font-size: 13px;
+}
+  </style>
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.3.1
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -59,22 +74,26 @@
                     @endif
               <!-- Default Table -->
               
-              <table class="table table-bordered">
+              <table class="table" id="employeetable">
                 <thead>
-                  <tr>
+                  <tr class="textcolor_head">
+                    <th scope="col">S.NO</th>
                     <th scope="col">Employee Code</th>
                     <th scope="col">Employee Name</th>
                     <th scope="col">Employee Email ID</th>
   
-                    <th scope="col">Login Allowed</th>
+                    <th scope="col">Login </th>
                     <th scope="col">Delete</th>
-                    <th scope="col">update</th>
+                    <th scope="col">Edit</th>
                   </tr>
                 </thead>
                 <tbody>
+                  <?php $counting=0; ?>
                 @if($datacount > 0)
                   @foreach($data as $dt)
-                  <tr>
+                  <?php $counting=$counting+1; ?>
+                  <tr class="textcolor_body">
+                    <td><center>{{ $counting }}</center></td>
                     <td>{{ $dt['employeecode'] }}</td>
                     <td>{{ $dt['name'] }}</td>
                     <td>{{ $dt['email'] }}</td>
@@ -122,9 +141,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
   <!-- Template Main JS File -->
   <script src="{{ asset('assets/js/main.js') }}"></script>
+  <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script>
 $(document).ready(function()
 {
+  $('#employeetable').DataTable({
+    responsive:true
+  });
   $('.changestatus').click(function()
   {
     var changestatus=$(this).attr('href').split('#')[2];

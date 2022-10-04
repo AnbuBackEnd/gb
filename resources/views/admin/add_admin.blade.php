@@ -56,7 +56,6 @@ href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTabl
               @if($settingscount > 0)
               @foreach($settings as $row)
                 <?php $dateofjoiningallowed=$row['dateofjoiningallowed']; ?>
-             
               @endforeach
               @endif
               <form method="post" class="formclass"  action="{{ route('add-admin-post') }}">
@@ -249,8 +248,17 @@ app.controller('myCtrl', function($scope,$http) {
   {
       if($(this).val() != '')
       {
-          $('.passworderror').html('');
+          if($(this).val().length < 8)
+          {
+            $('.passworderror').html('<font size="2">Password Must be 8 Characters</font>');
+            $('.addprimaryadmin').attr('disabled',true);
+          }
+          else
+          {
+            $('.passworderror').html('');
           $('.addprimaryadmin').attr('disabled',false);
+          }
+          
       }
       else
       {
