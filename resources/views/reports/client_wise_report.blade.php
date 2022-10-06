@@ -67,7 +67,11 @@
                     <select class="form-select clientname" aria-label="Default select example" name="activeStatus" id="activeStatus" placeholder="Select Client">
                     <option value="&nbsp;"></option>
                       @foreach($clients as $row)
+                      <?php if($row['email'] == $email){ ?>
+                      <option value="{{ $row['email'] }}" selected>{{ $row['client_name'] }}</option>
+                      <?php } else{ ?>
                       <option value="{{ $row['email'] }}">{{ $row['client_name'] }}</option>
+                      <?php } ?>
                       @endforeach
                     
                     </select>
@@ -116,11 +120,11 @@
                  
                   <tr>
                     <td>{{ date('d-m-Y',strtotime($dt['invest_date'])) }}</td>
-                    <td>{{ round($dt['invest_amount'],2) }}</td>
+                    <td>{{ number_format($dt['invest_amount'],2) }}</td>
                     <td>{{ $dt['tenure']}} Months</td>
                     <td>{{ $dt['locked_period']}} Months</td>
-                    <td>{{ round($dt['return_overall'],2) }}</td>
-                    <td>{{ round($dt['payable_amount'],2) }}</td>
+                    <td>{{ number_format($dt['return_overall'],2) }}</td>
+                    <td>{{ number_format($dt['payable_amount'],2) }}</td>
                   
                
                   </tr>
@@ -159,6 +163,7 @@
 
   <!-- Template Main JS File -->
   <script src="{{ asset('assets/js/main.js') }}"></script>
+  
 <script>
 $(document).ready(function()
 {

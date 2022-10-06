@@ -2,6 +2,7 @@
 <html lang="en">
 
 <body>
+<center><img src="{{ public_path('greenbound.jpg') }}" width="200px" height="45px"> </center></header>
   <center><h2>OverAll Clients Report</h2></center>
 @if($clients != false)
                 <table width="100%" border="1">

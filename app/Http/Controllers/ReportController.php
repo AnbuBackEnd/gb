@@ -17,8 +17,6 @@ class ReportController extends Controller
 {
     public function investmentrecords($investmentid=0,Request $request)
     {
-        
-            $tenurerecords=Tenurerecords::where('investment_id',$investmentid)->orderBy('investdate','ASC')->get();
             if($request->session()->exists('user_type')) 
             {
                 if($request->session()->get('user_type_id') == 1)
@@ -49,8 +47,60 @@ class ReportController extends Controller
                 $clients='';
             }
            
-        return view('reports.investmentrecords',['tenurerecords' => $tenurerecords,'investmentrecords' => $investmentrecords,'investmentid' => $investmentid,'clients' => $clients,'investmentpar' => $investmentpar]);   
+        return view('reports.investmentrecords',['investmentrecords' => $investmentrecords,'investmentid' => $investmentid,'clients' => $clients,'investmentpar' => $investmentpar]);   
 
+    }
+    public function investmentrecords_export($investmentid,Request $request)
+    {
+        if($request->session()->exists('user_type')) 
+            {
+                if($request->session()->get('user_type_id') == 1)
+                {
+                    $investmentrecords=investment::all();
+                }
+                else if($request->session()->get('user_type_id') == 2)
+                {
+                    $investmentrecords=investment::where('admin_email_id',$request->session()->get('email'))->get();
+                }
+                else if($request->session()->get('user_type_id') == 3)
+                {
+                    $investmentrecords=investment::all();
+                }
+
+            }
+            $investmentpar=investment::where('_id',$investmentid)->get();
+            
+            if($investmentpar->count() > 0)
+            {
+                
+                $clients=Client::where('email',$investmentpar[0]->client_email_id)->get();
+
+            }
+            else 
+            {
+                $clients='';
+            }
+            $pdf = Pdf::loadView('Export.investmentrecords_export', ['investmentrecords' => $investmentrecords,'investmentid' => $investmentid,'clients' => $clients,'investmentpar' => $investmentpar]);
+            return $pdf->setPaper('a4')->stream();
+    }
+    public function getclients()
+    {
+        if($request->session()->exists('user_type'))
+        {
+            if($request->session()->get('user_type_id') == 1)
+            {
+                $client=Client::all();
+            }
+            else if($request->session()->get('user_type_id') == 2)
+            {
+                $client=Client::where('assignAdmin',$request->session()->get('email'))->get();
+            }
+            else if($request->session()->get('user_type_id') == 3)
+            {
+                $client=Client::Where('assignEmployee',$request->session()->get('email'))->get();
+            }
+        }
+        echo json_encode($client);
     }
     public function client_wise_report($email=null,Request $request)
     {
@@ -297,6 +347,15 @@ class ReportController extends Controller
             {
                 $client=Client::where('email',$email)->get();
                 $investmentrecords=investment::where('client_email_id',$email)->where('_id',$id)->get();
+            }
+            else if($request->session()->get('user_type_id') == 3)
+            {
+                $client=Client::where('email',$email)->get();
+                $investmentrecords=investment::where('client_email_id',$email)->where('_id',$id)->get();
+            }
+            else
+            {
+                return redirect('/login');
             }
            
         }

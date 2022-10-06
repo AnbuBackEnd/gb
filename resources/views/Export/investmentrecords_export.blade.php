@@ -3,8 +3,8 @@
 
 <body>
 <center><img src="{{ public_path('greenbound.jpg') }}" width="200px" height="45px"> </center></header>
-  <center><h2>Client Wise Report</h2></center>
-@if($data != false)
+  <center><h2>Investment Report</h2></center>
+@if($clients != false)
                 <table width="100%" border="1">
                 <thead>
                   <tr>
@@ -15,7 +15,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach($data as $dt)
+                  @foreach($clients as $dt)
                  
                   <tr>
                     <td><center>{{ $dt['client_name'] }}</center></td>
@@ -30,7 +30,7 @@
               </table>
               @endif
               <br>
-              @if($investments != false)
+              @if($investmentpar != false)
                 <table width="100%" border="1">
                 <thead>
                   <tr>
@@ -43,7 +43,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach($investments as $dt)
+                  @foreach($investmentpar as $dt)
                  
                   <tr>
                     <td><center>{{ date('d-m-Y',strtotime($dt['invest_date'])) }}</td>

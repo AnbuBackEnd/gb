@@ -66,7 +66,7 @@
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="flush-headingOne">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#secondaryadmins" aria-expanded="false" aria-controls="flush-collapseOne">
-                     Secondary Admin
+                     Primary Admin
                     </button>
                   </h2>
                   <div id="secondaryadmins" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
@@ -167,21 +167,7 @@
                     <td></td>
                    </tr>
                    @endforeach
-                   @foreach($secwithdraw as $row)
-                   <tr>
-                    <td scope="col"><center>With Draw</td>
-                    @if($row['create'] == 1)
-                    <td scope="col"><center><input class="form-check-input" type="checkbox" id="gridCheck1" name="withdrawcreate" value="1" style="float:center;" checked></center></td>
-                    @else 
-                    <td scope="col"><center><input class="form-check-input" type="checkbox" id="gridCheck1" name="withdrawcreate" value="1" style="float:center;"></center></td>
-                    @endif
-                    
-                    <td scope="col"><center></center></td>
-                    <td scope="col"><center></center></td>
-                    <td scope="col"><center></center></td>
-                    <td scope="col"><center></center></td>
-                   </tr>
-                   @endforeach
+                 
                    @foreach($secreports as $row)
                    <tr>
                     <td scope="col"><center>Reports</td>
@@ -293,21 +279,7 @@
                     <td></td>
                    </tr>
                    @endforeach
-                   @foreach($empwithdraw as $row)
-                   <tr>
-                    <td scope="col"><center>With Draw</td>
-                    @if($row['create'] == 1)
-                    <td scope="col"><center><input class="form-check-input" type="checkbox" id="gridCheck1" name="withdrawcreate1" value="1" style="float:center;" checked></center></td>
-                    @else 
-                    <td scope="col"><center><input class="form-check-input" type="checkbox" id="gridCheck1" name="withdrawcreate1" value="1" style="float:center;"></center></td>
-                    @endif
-                    
-                    <td scope="col"><center></center></td>
-                    <td scope="col"><center></center></td>
-                    <td scope="col"><center></center></td>
-                    <td scope="col"><center></center></td>
-                   </tr>
-                   @endforeach
+                  
                    @foreach($empreports as $row)
                    <tr>
                     <td scope="col"><center>Reports</td>

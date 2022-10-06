@@ -50,7 +50,16 @@
             <div class="card-body">
             <h5 class="card-title">Investment Records</h5>
               <form>
+              @if($investmentid != 0)
               <div class="row">
+              <div class="col-sm-9"></div>
+              <div class="col-sm-3">
+              <A href="{{url('investmentrecords_export')}}/{{$investmentid}}" target="_block"><button type="button" class="btn btn-danger rounded-pill" >Download As Pdf</button></A>
+</div>
+</div>
+@endif
+              <div class="row">
+              <div class="col-sm-4">
                   <select class="form-select clients" aria-label="Default select example" name="clients" id="clients" placeholder="Select Investment Record">
                     @if($investmentrecords != false)
                       @foreach($investmentrecords as $row)
@@ -58,7 +67,7 @@
                       @endforeach
                   @endif
                     </select>
-                </div><br>
+                    </div></div><br>
                 @if($clients != false)
                 <table class="table table-bordered">
                 <thead>
@@ -101,13 +110,11 @@
                  
                   <tr>
                     <td>{{ date('d-m-Y',strtotime($dt['invest_date'])) }}</td>
-                    <td>{{ round($dt['invest_amount'],2) }}</td>
+                    <td>{{ number_format($dt['invest_amount'],2) }}</td>
                     <td>{{ $dt['tenure']}} Months</td>
                     <td>{{ $dt['locked_period']}} Months</td>
-                    <td>{{ round($dt['return_overall'],2) }}</td>
-                    <td>{{ round($dt['payable_amount'],2) }}</td>
-                  
-               
+                    <td>{{ number_format($dt['return_overall'],2) }}</td>
+                    <td>{{ number_format($dt['payable_amount'],2) }}</td>
                   </tr>
                   @endforeach
                 

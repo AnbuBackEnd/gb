@@ -531,19 +531,14 @@ app.controller('myCtrl', function($scope,$http) {
       
       $('#maturityperiod').val(parseInt(mat)+parseInt($(this).val()));
       var investamount=parseFloat($('#investamount').val(),2);
-      var start_investamount=investamount;
-      var tenure=$(this).val();
-      var interestrate=$('#interestrate').val();
-      var divide=tenure/12;
-      var returnamount=investamount;
-      if(tenure > 0)
-      {
-        for(var i=0;i<tenure;i++)
-        {
-          returnamount=returnamount+((returnamount/100)*interestrate);
-        }
-      }
-      $('#returns').val(parseFloat(returnamount).toFixed(2));
+              var start_investamount=investamount;
+              var tenure=$('#tenure').val();
+              var interestrate=$('#interestrate').val();
+              var returnamount_monthly=((investamount/100)*interestrate);
+              $('#returns_monthly').val(returnamount_monthly);
+              var returnamount_yearly=parseInt(returnamount_monthly)*tenure;  
+              $('#returns_overall').val(returnamount_yearly);
+              $('#overallreturnamount').val(returnamount_yearly+investamount);
     }
   }); 
   $('#lockperiod').keyup(function()

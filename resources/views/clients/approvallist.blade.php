@@ -77,8 +77,8 @@
                   <tr>
                     <td>{{ $dt['client_code'] }}</td>
                     <td>{{ date('d-m-Y',strtotime($dt['invest_date'])) }}</td>
-                    <td>{{ $dt['invest_amount'] }}</td>
-                    <td>{{ $dt['return_overall'] }}</td>
+                    <td>{{ number_format($dt['invest_amount'],2) }}</td>
+                    <td>{{ number_format($dt['return_overall'],2) }}</td>
                     <td>{{ date('d-m-Y',strtotime($dt['maturitydate'])) }}</td>
                     <td scope="col"><center><A href="#<?php echo $dt['client_email_id']; ?>#<?php echo $dt['_id']; ?>" class="viewandapprove"><span class="badge bg-primary">View and Approve</span></A></center></td>
                   </tr>

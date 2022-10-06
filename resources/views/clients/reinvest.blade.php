@@ -65,9 +65,10 @@
                     <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                     @endif
                     <input type="hidden" name="investmentid" id="investmentid" value="<?php echo $id; ?>">
-                    <input type="hidden" name="client_email_id" id="client_email_id" value="<?php echo $email; ?>">
+                    <input type="hidden" name="emailhide" id="emailhide" value="<?php echo $email; ?>">
                     <?php if($clients != false){
                       foreach($clients as $row){ ?>
+                      
                     <div class="row mb-3">
                     <div class="col-sm-4">
                         <label for="inputEmail" class="col-form-label">Client Code</label>
@@ -82,10 +83,30 @@
                         <label for="inputEmail" class="col-form-label">Client Name</label>
                     </div>
                     <div class="col-sm-8">
-                      <input type="text" class="form-control" name="name" id="name" value="<?php echo $row['client_name']; ?>" autocomplete="off">
+                      <input type="text" class="form-control" name="name" id="name" value="<?php echo $row['client_name']; ?>" autocomplete="off" disabled>
                       
                     </div>
               </div>
+              <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <label for="inputEmail" class="col-form-label">Client Address</label>
+                    </div>
+                    <div class="col-sm-8">
+                    <textarea class="form-control" style="height: 100px" name="client_address" id="client_address" disabled><?php echo $row['client_address']; ?></textarea>
+                      <span class="text-danger adminaddresserror">@error('client_address') {{$message}}@enderror</span>
+                    </div>
+              </div>
+             
+            
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                <label class="col-form-label">Client Mobile No</label>
+                </div>
+                  <div class="col-sm-8">
+                  <input type="number" class="form-control" name="mobile" id="mobile" value="<?php echo $row['client_phone']; ?>" autocomplete="off" disabled>
+                    <span class="text-danger adminmobileerror">@error('mobile') {{$message}}@enderror</span>
+                  </div>
+            </div>
               <?php } } ?>
               <?php if($investment != false){
                 foreach($investment as $row){ ?>
@@ -96,39 +117,23 @@
                 <label class="col-form-label">Return Amount</label>
                 </div>
                   <div class="col-sm-8">
-                  <input type="text" class="form-control" name="returnamount" id="returnamount" value="<?php echo $row['return_overall']; ?>" autocomplete="off" disabled>
+                  <input type="text" class="form-control" name="returnamount" id="returnamount" value="<?php echo $row['payable_amount']; ?>" autocomplete="off" disabled>
                     
                   </div>
             </div>
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                <label class="col-form-label">Extra Amount To Pay</label>
-                </div>
-                  <div class="col-sm-8">
-                  <input type="number" class="form-control" name="extraamount" id="extraamount" value="{{ old('extraamount') }}" autocomplete="off">
-                    <span class="text-danger extraamounterror">@error('extraamount') {{$message}}@enderror</span>
-                  </div>
-            </div>
+          <input type="hidden" name="investamount" id="investamount" value="<?php echo $row['payable_amount']; ?>"> 
             <?php $returnamount=$row['return_overall']; ?>
             <div class="row mb-3">
                 <div class="col-sm-4">
                 <label class="col-form-label">Investment Amount</label>
                 </div>
                   <div class="col-sm-8">
-                  <input type="text" class="form-control" name="investamount" id="investamount">
-                  <span class="text-danger investamounterror"></span>
+                  <input type="text" class="form-control" name="investamount1" id="investamount1" value="<?php echo $row['payable_amount']; ?>" autocomplete="off" disabled>
+                
                   </div>
             </div>
             <?php } } ?>
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                <label class="col-form-label">Pay to Client </label>
-                </div>
-                  <div class="col-sm-8">
-                  <input type="text" class="form-control" name="remainingamount" id="remainingamount" disabled>
-                    
-                  </div>
-            </div>
+         
             <div class="row mb-3">
                 <div class="col-sm-4">
                 <label class="col-form-label">Investment Date</label>
@@ -198,7 +203,7 @@
            
             <div class="row mb-3">
                   <div class="col-sm-12">
-                    <center><button type="button" class="btn btn-primary addclients">Add Client</button></center>
+                    <center><button type="button" class="btn btn-primary addclients">Re Invest</button></center>
                   </div>
             </div>
            
@@ -238,12 +243,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
   <script>
   $(document).ready(function(){
-    $('#extraamount').focus();
-    $('#investamount').val('<?php echo $returnamount; ?>');
+   
     $('.addclients').click(function()
     {
       swal({
-              title: 'Are you sure you want to confirm to Add Client...'+$('#clientcode').val()+'?',
+              title: 'Are you sure you want to confirm to Re Invest...?',
               icon: "warning",
               buttons: true,
               dangerMode: true,
@@ -254,22 +258,7 @@
             }
           });
     });
-    $('#extraamount').keyup(function()
-    {
-      $('.investamounterror').html('');
-        if($(this).val().length > 0)
-        {
-          var extraamount=$(this).val();
-        }
-        else
-        {
-          var extraamount=0;
-        }
-        var investamount='<?php echo $returnamount; ?>';
-       
-        $('#investamount').val(parseFloat(investamount)+parseFloat(extraamount));
-      
-    });
+   
     $('#investamount').keyup(function()
     {
       $('.investamounterror').html('');
@@ -383,19 +372,13 @@
       
       $('#maturityperiod').val(parseInt(mat)+parseInt($(this).val()));
       var investamount=parseFloat($('#investamount').val(),2);
-      var start_investamount=investamount;
-      var tenure=$(this).val();
-      var interestrate=$('#interestrate').val();
-      var divide=tenure/12;
-      var returnamount=investamount;
-      if(tenure > 0)
-      {
-        for(var i=0;i<tenure;i++)
-        {
-          returnamount=returnamount+((returnamount/100)*interestrate);
-        }
-      }
-      $('#returns').val(parseFloat(returnamount).toFixed(2));
+              var tenure=$('#tenure').val();
+              var interestrate=$('#interestrate').val();
+              var returnamount_monthly=((investamount/100)*interestrate);
+              $('#returns_monthly').val(returnamount_monthly);
+              var returnamount_yearly=parseInt(returnamount_monthly)*tenure;  
+              $('#returns_overall').val(returnamount_yearly);
+              $('#overallreturnamount').val(returnamount_yearly+investamount);
     }
   }); 
   $('#lockperiod').keyup(function()

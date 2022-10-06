@@ -13,7 +13,6 @@ use Session;
 use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
-    
     public function savesettings(Request $request)
     {
         $request->validate([
@@ -214,8 +213,8 @@ class UserController extends Controller
         ]);
         $superadmin=User::where('email', '=', $request->email)->where('password',$request->password)->count();
         $admin=Secondaryadmin::where('email', '=', $request->email)->where('pwd',$request->password)->where('activeStatus','1')->count();
-        $employee=employee::where('email', '=', $request->email)->where('activeStatus','1')->count();
-        $client=Client::where('email', '=', $request->email)->count();
+        $employee=employee::where('email', '=', $request->email)->where('pwd', '=', $request->password)->where('activeStatus','1')->count();
+        $client=Client::where('email', '=', $request->email)->where('pwd', '=', $request->password)->count();
         if($superadmin > 0)
         {
             $user=User::where('email',$request->email)->get();
@@ -239,7 +238,7 @@ class UserController extends Controller
                 $request->session()->put('phone',$adminuser[0]->phone);
                 $request->session()->put('date_of_joining',$adminuser[0]->date_of_joining);
                 $request->session()->put('activeStatus',$adminuser[0]->activeStatus);
-                return redirect()->route('addEmployee');
+                return redirect()->route('Dashboard');
         }
         else if($employee > 0)
         {
@@ -256,7 +255,7 @@ class UserController extends Controller
                 $request->session()->put('activeStatus',$employeeuser[0]->activeStatus);
                 $request->session()->put('assignAdmin',$employeeuser[0]->assignAdmin);
 
-               return redirect()->route('addClients');
+               return redirect()->route('Dashboard');
         }
         else if($client > 0)
         {
@@ -270,7 +269,7 @@ class UserController extends Controller
                 $request->session()->put('gender',$clientuser[0]->gender);
                 $request->session()->put('activeStatus',$clientuser[0]->activeStatus);
                 $request->session()->put('assignAdmin',$clientuser[0]->assignAdmin);
-                return redirect()->route('addEmployee');
+                return redirect()->route('Dashboard');
         }
         else
         {
@@ -285,31 +284,77 @@ class UserController extends Controller
     }
     public function approvallist(Request $request)
     {
-        $approvallist=investment::where('approval',intval(0))->where('admin_email_id',$request->session()->get('email'))->get();
-        $approvallistcount=investment::where('approval',0)->where('admin_email_id',$request->session()->get('email'))->count();
-        return view('clients.approvallist',['approvallist' => $approvallist, 'approvallistcount'=> $approvallistcount]);
+        if($request->session()->exists('user_type')) 
+        {
+            if($request->session()->get('user_type_id') == 1)
+            {
+                $approvallist=investment::where('approval',intval(0))->get();
+                $approvallistcount=investment::where('approval',0)->count();
+                return view('clients.approvallist',['approvallist' => $approvallist, 'approvallistcount'=> $approvallistcount]);
+            }
+            else if($request->session()->get('user_type_id') == 2)
+            {
+                $approvallist=investment::where('approval',intval(0))->where('admin_email_id',$request->session()->get('email'))->get();
+                $approvallistcount=investment::where('approval',0)->where('admin_email_id',$request->session()->get('email'))->count();
+                return view('clients.approvallist',['approvallist' => $approvallist, 'approvallistcount'=> $approvallistcount]);
+            }
+        }
+       
 
     }
     public function viewapprovalrecord($email,$investid,Request $request)
     {
         $client=Client::where('email',$email)->get();
         $investmentrecords=investment::where('_id',$investid)->get();
-        if($investmentrecords)
+        $investmentrecordscount=investment::where('_id',$investid)->count();
+        
+        if($investmentrecordscount > 0)
         {
             if($investmentrecords[0]->usertypeid == 1)
             {
                 $role='Super Admin';
-                $name=User::where('email',$investmentrecords[0]->enteredmailid)->get()[0]['name'];
+               
+                $namecount=User::where('email',$investmentrecords[0]->enteredmailid)->count();
+                if($namecount > 0)
+                {
+                    $name=User::where('email',$investmentrecords[0]->enteredmailid)->get()[0]['name'];
+                }
+                else
+                {
+                    $name='';
+                }
+               
             }
             else if($investmentrecords[0]->usertypeid == 2)
             {
                 $role = 'Admin';
-                $name=Secondaryadmin::where('email',$investmentrecords[0]->enteredmailid)->get()[0]['name'];
+                $namecount=Secondaryadmin::where('email',$investmentrecords[0]->enteredmailid)->count();
+                if($namecount > 0)
+                {
+                    $name=Secondaryadmin::where('email',$investmentrecords[0]->enteredmailid)->get()[0]['name'];
+                }
+                else
+                {
+                    $name='';
+                }
+                
             }
             else if($investmentrecords[0]->usertypeid == 3)
             {
                 $role = 'Employee';
-                $name=employee::where('email',$investmentrecords[0]->enteredmailid)->get()[0]['name'];
+               
+                $namecount=employee::where('email',$investmentrecords[0]->enteredmailid)->count();
+                if($namecount > 0)
+                {
+                    $name=employee::where('email',$investmentrecords[0]->enteredmailid)->get()[0]['name'];
+                }
+                else
+                {
+                    $name='';
+                }
+                
+               
+       
             }
             
         }

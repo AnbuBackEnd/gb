@@ -18,7 +18,10 @@ Route::get('/deleteemployee/{email}/{id}', [EmployeeController::class, 'deleteem
 Route::get('/login', [UserController::class, 'login']);
 Route::get('/forgetpassword', [UserController::class, 'forgetpassword']);
 Route::get('/newinv', [ClientController::class, 'newinv']);
+Route::get('/clientlist_par/{email}', [ClientController::class, 'clientlist_par']);
+Route::get('/clientlist', [ClientController::class, 'clientlist']);
 Route::post('/savesettings', [UserController::class, 'savesettings'])->name('save-settings');
+Route::post('/newclientspost', [ClientController::class, 'newclientspost'])->name('new-clients-post');
 Route::post('/forgetpassword_request', [UserController::class, 'forgetpassword_request'])->name('submit-forget-password');
 Route::post('/recreatepasswordpost', [UserController::class, 'recreatepasswordpost'])->name('recreatepassword-post');
 Route::get('/passwordcreated', [UserController::class, 'passwordcreated']);
@@ -58,6 +61,7 @@ Route::get('/editinvestingrecords/{email}/{id}', [ClientController::class, 'edit
 Route::get('/updateemployee/{id}', [EmployeeController::class, 'updateemployee'])->name('updateemployee');
 Route::get('/client_wise_report/{email}', [ReportController::class, 'client_wise_report'])->name('client_wise_report');
 Route::get('/client_wise_report_export/{email}', [ReportController::class, 'client_wise_report_export'])->name('client_wise_report_export');
+Route::get('/investmentrecords_export/{id}', [ReportController::class, 'investmentrecords_export'])->name('investmentrecords_export');
 Route::get('/viewdocument/{email}/{id}', [ReportController::class, 'viewdocument']);
 Route::get('/overallclientreports', [ReportController::class, 'overallreports'])->name('overallclientreports');
 Route::get('/overallclientreports_export', [ReportController::class, 'overallclientreports_export'])->name('overallclientreports_export');

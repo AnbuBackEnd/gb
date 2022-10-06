@@ -59,11 +59,12 @@
           <div class="row">
 
             <!-- Sales Card -->
+            @if(Session::get('user_type_id') == 1)
             <div class="col-xxl-4 col-md-4">
               <div class="card info-card sales-card">
 
                 
-
+               
                 <div class="card-body">
                   <h5 class="card-title">Primary Admins </h5>
 
@@ -80,6 +81,7 @@
 
               </div>
             </div><!-- End Sales Card -->
+            @endif
             <div class="col-xxl-4 col-md-4">
               <div class="card info-card sales-card">
 
@@ -101,6 +103,7 @@
 
               </div>
             </div><!-- End Sales Card -->
+            @if(Session::get('user_type_id') != 3)
             <div class="col-xxl-4 col-md-4">
               <div class="card info-card sales-card">
 
@@ -122,6 +125,7 @@
 
               </div>
             </div><!-- End Sales Card -->
+            @endif
             <div class="col-xxl-4 col-md-4">
               <div class="card info-card sales-card">
 
@@ -193,7 +197,7 @@
                 
 
                 <div class="card-body">
-                  <h5 class="card-title">Amount of Investments </h5>
+                  <h5 class="card-title">Total Investments </h5>
 
                   <div class="d-flex align-items-center">
                     

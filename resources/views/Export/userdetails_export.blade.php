@@ -2,6 +2,7 @@
 <html lang="en">
 
 <body>
+<center><img src="{{ public_path('greenbound.jpg') }}" width="200px" height="45px"></center>
   <center><h2>User Details</h2></center>
                 <table width="100%" border="1">
                 <thead>
@@ -14,32 +15,20 @@
                   </tr>
                 </thead>
                 <tbody>
-                @if(Session::get('user_type_id') ==1)
-                  @foreach($superadmins as $dt)
-                 
-                  <tr>
-                  <td>{{ $dt['name'] }}</td>
-                    <td>{{ $dt['email'] }}</td>
-                    <td>{{ $dt['phone']}}</td>
-                    <td>Super Admin</td>
-                    <td>@if($dt['activeStatus'] == 1)<span class="badge bg-primary">Active</span> @else <span class="badge bg-danger">In Active</span> @endif</td>
-               
-                  </tr>
-                  @endforeach
-                  @endif
+            
                   @if(Session::get('user_type_id') ==1)
                   @foreach($admin as $dt)
                   <tr>
                     <td>{{ $dt['name'] }}</td>
                     <td>{{ $dt['email'] }}</td>
                     <td>{{ $dt['phone']}}</td>
-                    <td>Secondary Admin</td>
+                    <td>Primary Admin</td>
                     <td>@if($dt['activeStatus'] == 1)<span class="badge bg-primary">Active</span> @else <span class="badge bg-danger">In Active</span> @endif</td>
                
                   </tr>
                   @endforeach
                   @endif
-                  @if(Session::get('user_type_id') ==2 || Session::get('user_type_id') ==3)
+                  @if(Session::get('user_type_id') == 1 || Session::get('user_type_id') ==2 || Session::get('user_type_id') ==3)
                   @if($employee != false)
                   @foreach($employee as $dt)
                   <tr>

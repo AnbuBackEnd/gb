@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Add New Investment</title>
+  <title>New Investment</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
   <!-- Favicons -->
@@ -39,15 +39,16 @@
   @include('others.sidemenu');
   <main id="main" class="main">
     <section class="section">
-    <form method="post"  action="{{ route('add-clients-post') }}" class="formclass">
+    <form method="post"  action="{{ route('new-clients-post') }}" class="formclass">
       <div class="row" ng-app="myApp" ng-controller="myCtrl">
-        <div class="col-lg-6">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Add New Investment</h5>
+              <h5 class="card-title">New Investment</h5>
               <!-- General Form Elements -->
               <input type="hidden" name="clientnumber" id="clientnumber" value="<?php echo $clientnumber; ?>">
-              <input type="hidden" name="clientcode" id="clientcode" value="<?php echo $clientcode; ?>">
+              
               @if($settingscount > 0)
               @foreach($settings as $row)
                 <?php $pastdatesettings=$row['investmentdateallowed']; ?>
@@ -64,30 +65,26 @@
                     @if(Session::has('fail'))
                     <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                     @endif
-                    <div class="row mb-3">
-                    <div class="col-sm-4">
-                        <label for="inputEmail" class="col-form-label">Client Code</label>
-                    </div>
-                    <div class="col-sm-8">
-                      <input type="text" class="form-control" name="clientcode1" id="clientcode1" value="{{ $clientcode }}" autocomplete="off" disabled>
-                      
-                    </div>
-              </div>
+                   <input type="hidden" name="emailhide" id="emailhide">
               <div class="row mb-3">
-                    <div class="col-sm-4">
-                        <label for="inputEmail" class="col-form-label">Client Name</label>
-                    </div>
-                    <div class="col-sm-8">
-                      <input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}" autocomplete="off">
-                      <span class="text-danger adminnameerror">@error('name') {{$message}}@enderror</span>
-                    </div>
-              </div>
+                <div class="col-sm-4">
+                <label class="col-form-label">Client Code</label>
+                </div>
+                  <div class="col-sm-8">
+                    <select class="form-select" ng-options="user.client_code for user in clientlist" aria-label="Default select example" name="clientname" id="clientname" placeholder="Select Client" ng-model="clientmodel"  ng-change="getclientdetails()">
+                      
+                    </select>
+                  </div>
+            </div>
+            
+           
+              
               <div class="row mb-3">
                     <div class="col-sm-4">
                         <label for="inputEmail" class="col-form-label">Client Email</label>
                     </div>
                     <div class="col-sm-8">
-                      <input type="email" class="form-control" name="email" id="email" value="{{ old('email') }}" autocomplete="off">
+                      <input type="email" class="form-control" name="email" id="email" value="" autocomplete="off" disabled>
                       <span class="text-danger adminemailerror">@error('email') {{$message}}@enderror</span>
                     </div>
               </div>
@@ -96,40 +93,18 @@
                         <label for="inputEmail" class="col-form-label">Client Address</label>
                     </div>
                     <div class="col-sm-8">
-                    <textarea class="form-control" style="height: 100px" name="client_address" id="client_address">{{old('client_address')}}</textarea>
+                    <textarea class="form-control" style="height: 100px" name="client_address" id="client_address" disabled></textarea>
                       <span class="text-danger adminaddresserror">@error('client_address') {{$message}}@enderror</span>
                     </div>
               </div>
              
-              <fieldset class="row mb-3">
-                <div class="col-sm-4">
-                <legend class="col-form-label pt-0">Gender</legend>
-                </div>
-                  
-                  <div class="col-sm-8">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="gender" id="gridRadios1" value="1" checked>
-                      <label class="form-check-label" for="gridRadios1">
-                        Male
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      
-                      <input class="form-check-input" type="radio" name="gender" id="gridRadios2" value="2">
-                      <label class="form-check-label" for="gridRadios2">
-                      Female
-                      </label>
-                    </div>
-                    <span class="text-danger">@error('gender') {{$message}}@enderror</span>
-                   
-                  </div>
-              </fieldset>
+            
             <div class="row mb-3">
                 <div class="col-sm-4">
                 <label class="col-form-label">Client Mobile No</label>
                 </div>
                   <div class="col-sm-8">
-                  <input type="number" class="form-control" name="mobile" id="mobile" value="{{ old('mobile') }}" autocomplete="off">
+                  <input type="number" class="form-control" name="mobile" id="mobile" value="{{ old('mobile') }}" autocomplete="off" disabled>
                     <span class="text-danger adminmobileerror">@error('mobile') {{$message}}@enderror</span>
                   </div>
             </div>
@@ -162,25 +137,7 @@
                     <span class="text-danger tenureperioderror">@error('tenure') {{$message}}@enderror</span>
                   </div>
             </div>
-            
-           
-           
-
-            
-
-            </div>
-          </div>
-
-        </div>
-        <div class="col-lg-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"></h5>
-              <!-- General Form Elements -->
-             
-            
-             
-                    <div class="row mb-3">
+            <div class="row mb-3">
                 <div class="col-sm-4">
                 <label class="col-form-label">Maturity Period<br>(In Months)</label>
                 </div>
@@ -225,58 +182,29 @@
                     <span class="text-danger">@error('returns') {{$message}}@enderror</span>
                   </div>
             </div>
+          
            
             
           
-            @if(Session::get('user_type_id') == 1)
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                <label class="col-form-label">Assign Primary Admin</label>
-                </div>
-                  <div class="col-sm-8">
-                    <select class="form-select" ng-options="user.name for user in adminlist" aria-label="Default select example" name="assignAdmin" id="assignAdmin" placeholder="Select Admins" ng-change="getdetails()" ng-model="primaryadminmodel">
-                      
-                  
-                    </select>
-                  </div>
-            </div>
-            @endif
-            @if(Session::get('user_type_id') != 3)
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                <label class="col-form-label">Assign Employee</label>
-                </div>
-                  <div class="col-sm-8">
-                    <select class="form-select" ng-options="user.name for user in employeelist" aria-label="Default select example" name="assignEmployee" id="assignEmployee" placeholder="Select Employee" ng-model="employeemodel">
-                      
-                    </select>
-                  </div>
-            </div>
-            @endif
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                <label class="col-form-label">Login Allowed</label>
-                </div>
-                  <div class="col-sm-8">
-                    <select class="form-select" aria-label="Default select example" name="activeStatus" id="activeStatus">
-                      <option value="1">Yes</option>
-                      <option value="2">No</option>
-                    </select>
-                  </div>
-            </div>
+           
            
             <div class="row mb-3">
                   <div class="col-sm-12">
                     <center><button type="button" class="btn btn-primary addclients">Add Client</button></center>
                   </div>
             </div>
-
-          <div>
-
 </div>
+           
+           
+
+            
 
             </div>
           </div>
+
+        </div>
+       
+        
           </form>
         </div>
    
@@ -306,6 +234,23 @@
   <script>
     var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope,$http) {
+  $http.get("http://127.0.0.1:8000/clientlist/").then(function(response) {
+    $scope.clientlistcount = response.data.length;
+    $scope.clientlist=response.data;
+  });
+  $scope.getclientdetails=function()
+  {
+    $http.get("http://127.0.0.1:8000/clientlist_par/"+$scope.clientmodel.email).then(function(response) {
+          $scope.clientlistcountpar = response.data.length;
+          $scope.clientlistpar=response.data;
+       
+        $('#email').val(response.data[0]['email']);
+        $('#emailhide').val(response.data[0]['email']);
+        $('#client_address').val(response.data[0]['client_address']);
+        $('#mobile').val(response.data[0]['client_phone']);
+        
+  });
+  }
   $('#name').keyup(function()
   {
     if($(this).val().length == 0)
@@ -426,7 +371,7 @@ app.controller('myCtrl', function($scope,$http) {
     $('.addclients').click(function()
     {
       swal({
-              title: 'Are you sure you want to confirm to Add Client...'+$('#clientcode').val()+'?',
+              title: 'Are you sure you want to confirm to Add Client...',
               icon: "warning",
               buttons: true,
               dangerMode: true,
@@ -530,19 +475,13 @@ app.controller('myCtrl', function($scope,$http) {
       
       $('#maturityperiod').val(parseInt(mat)+parseInt($(this).val()));
       var investamount=parseFloat($('#investamount').val(),2);
-      var start_investamount=investamount;
-      var tenure=$(this).val();
-      var interestrate=$('#interestrate').val();
-      var divide=tenure/12;
-      var returnamount=investamount;
-      if(tenure > 0)
-      {
-        for(var i=0;i<tenure;i++)
-        {
-          returnamount=returnamount+((returnamount/100)*interestrate);
-        }
-      }
-      $('#returns').val(parseFloat(returnamount).toFixed(2));
+              var tenure=$('#tenure').val();
+              var interestrate=$('#interestrate').val();
+              var returnamount_monthly=((investamount/100)*interestrate);
+              $('#returns_monthly').val(returnamount_monthly);
+              var returnamount_yearly=parseInt(returnamount_monthly)*tenure;  
+              $('#returns_overall').val(returnamount_yearly);
+              $('#overallreturnamount').val(returnamount_yearly+investamount);
     }
   }); 
   $('#lockperiod').keyup(function()

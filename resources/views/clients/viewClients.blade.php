@@ -28,7 +28,22 @@
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <style>
+table, th, td,tr {
+  border: 1px solid #2d5900;
+} 
+.textcolor_head
+{
+  color: black;
+  font-size: 15px;
+}
+.textcolor_body
+{
+  color: black;
+  font-size: 13px;
+}
+  </style>
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.3.1
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -58,9 +73,10 @@
                     <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                     @endif
               <!-- Default Table -->
-              <table class="table table-bordered">
+              <table class="table" id="clienttable">
                 <thead>
-                  <tr>
+                  <tr class="textcolor_head">
+                    <th scope="col">S.No</th>
                     <th scope="col">Client Code</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
@@ -74,14 +90,14 @@
                   </tr>
                 </thead>
                 <tbody>
+                  <?php $counting=0; ?>
                   @foreach($data as $dt)
-
-                  <tr>
+                  <?php $counting=$counting+1; ?>
+                  <tr class="textcolor_body">
+                    <td><center>{{ $counting }}</center></td>
                     <td>{{ $dt['client_code'] }}</td>
                     <td>{{ $dt['client_name'] }}</td>
                     <td>{{ $dt['email'] }}</td>
-                   
-                   
                     <!-- <td><A href="{{url('updateclients/'.$dt['email']) }}"><button class="btn btn-xs">Edit</button></A></td> -->
                     <!-- <td><A href="{{url('viewBriefClients/'.$dt['email']) }}"><button class="btn btn-xs">View</button></A></td> -->
                     <td><center>@if($dt['terminatestatus'] != 1)<A href="{{url('processclients/'.$dt['email']) }}"><span class="badge bg-info">Process</span></A>@endif</center></td>
@@ -123,9 +139,13 @@
 
   <!-- Template Main JS File -->
   <script src="{{ asset('assets/js/main.js') }}"></script>
+  <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 <script>
 $(document).ready(function()
 {
+  $('#clienttable').DataTable({
+    responsive:true
+  });
   $('.terminateclass').click(function()
   {
     var email=$(this).attr('href').split('#')[1];

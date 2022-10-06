@@ -9,6 +9,8 @@
       <span>Dashboard</span>
     </a>
   </li><!-- End Dashboard Nav -->
+  
+  
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#secondaryAdmin" data-bs-toggle="collapse" href="#">
       <i class="bi bi-person-bounding-box"></i><span>Primary Admin</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -58,6 +60,11 @@
         </a>
       </li>
       <li>
+        <a href="{{ url('newinv') }}">
+          <i class="bi bi-circle"></i><span>Add New Investment</span>
+        </a>
+      </li>
+      <li>
         <a href="{{ url('viewClients') }}">
           <i class="bi bi-circle"></i><span>View All Clients</span>
         </a>
@@ -68,27 +75,8 @@
      
     </ul>
   </li><!-- End Components Nav -->
-  <!-- <li class="nav-item">
-    <a class="nav-link collapsed" data-bs-target="#users" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-power"></i><span>User Privileges</span><i class="bi bi-chevron-down ms-auto"></i>
-    </a>
-    <ul id="users" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-      <li>
-        <a href="{{ url('setprivileges') }}">
-          <i class="bi bi-circle"></i><span>Set Privileges</span>
-        </a>
-      </li>
-     
-     
-     
-    </ul>
-  </li> -->
-  <li class="nav-item">
-    <a class="nav-link" href="{{url('settings')}}">
-      <i class="bi bi-columns-gap"></i>
-      <span>Settings</span>
-    </a>
-  </li><!-- End Dashboard Nav -->
+ 
+ 
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#reports" data-bs-toggle="collapse" href="#">
       <i class="bi bi-list-check"></i><span>Reports</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -122,6 +110,32 @@
       </li>
     </ul>
   </li><!-- End Components Nav -->
+  <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#otherswindow" data-bs-toggle="collapse" href="#">
+      <i class="bi bi-person-circle"></i><span>Others</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+    <ul id="otherswindow" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+      <li>
+        <a href="{{ url('approvallist') }}">
+          <i class="bi bi-circle"></i><span>Approval List</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ url('setprivileges') }}">
+          <i class="bi bi-circle"></i><span>Set Privileges</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ url('settings') }}">
+          <i class="bi bi-circle"></i><span>Settings</span>
+        </a>
+      </li>
+     
+     
+     
+     
+    </ul>
+  </li><!-- End Components Nav -->
 </ul>
 </aside><!-- End Sidebar-->
 @endif
@@ -129,11 +143,17 @@
 <aside id="sidebar" class="sidebar">
 <ul class="sidebar-nav" id="sidebar-nav">
 <li class="nav-item">
+    <a class="nav-link" href="{{url('Dashboard')}}">
+      <i class="bi bi-columns-gap"></i>
+      <span>Dashboard</span>
+    </a>
+  </li><!-- End Dashboard Nav -->
+<li class="nav-item">
     <a class="nav-link " href="{{url('approvallist')}}">
       <i class="bi bi-columns-gap"></i>
       <span>Approval List</span>
     </a>
-  </li><!-- End Dashboard Nav -->
+</li><!-- End Dashboard Nav -->
   
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#userswindow" data-bs-toggle="collapse" href="#">
@@ -162,6 +182,11 @@
     <li>
         <a href="{{ url('addClients') }}">
           <i class="bi bi-circle"></i><span>Add New Clients</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ url('newinv') }}">
+          <i class="bi bi-circle"></i><span>Add New Investment</span>
         </a>
       </li>
       <li>
@@ -209,14 +234,26 @@
 @if(Session::get('user_type') == 'Employee')
 <aside id="sidebar" class="sidebar">
 <ul class="sidebar-nav" id="sidebar-nav">
+<li class="nav-item">
+    <a class="nav-link" href="{{url('Dashboard')}}">
+      <i class="bi bi-columns-gap"></i>
+      <span>Dashboard</span>
+    </a>
+  </li><!-- End Dashboard Nav -->
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#clientswindow" data-bs-toggle="collapse" href="#">
       <i class="bi bi-menu-button-wide"></i><span>Clients</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
     <ul id="clientswindow" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+   
     <li>
         <a href="{{ url('addClients') }}">
           <i class="bi bi-circle"></i><span>Add New Clients</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ url('newinv') }}">
+          <i class="bi bi-circle"></i><span>Add New Investment</span>
         </a>
       </li>
       <li>

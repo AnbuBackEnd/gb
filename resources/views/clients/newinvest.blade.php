@@ -214,7 +214,7 @@
     $('.addclients').click(function()
     {
       swal({
-              title: 'Are you sure you want to confirm to Add Client...'+$('#clientcode').val()+'?',
+              title: 'Are you sure you want to confirm to Add Client...',
               icon: "warning",
               buttons: true,
               dangerMode: true,

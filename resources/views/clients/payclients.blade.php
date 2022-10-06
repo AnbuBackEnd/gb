@@ -54,11 +54,12 @@
                     <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                     @endif
             <?php 
+            $returnamount=0;
           if($investment != false)
           {
             foreach($investment as $row)
             {
-              
+
               $maturitydate=date('Y-m-d',strtotime($row['maturitydate']));
               $returnamount=$row['return_overall'];
             }

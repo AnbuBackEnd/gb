@@ -79,7 +79,7 @@
                     @if(Session::has('fail'))
                     <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                     @endif
-              @if($clientrecords != false)
+              @if($clientrecordscount > 0)
               @foreach($clientrecords as $row)
               <table class="table">
                 <thead>
@@ -117,6 +117,8 @@
               
               </table>
               @endforeach
+              @else 
+              <center><font color="red"><b>No Records Found..</b></font></center>
               @endif
             </div>
           </div>
@@ -124,7 +126,7 @@
         
         </div>
 
-     
+     <?php date_default_timezone_set('Asia/Kolkata'); ?>
       </div>
       <div class="row">
         <div class="col-lg-12">
@@ -135,7 +137,7 @@
             <h5 class="card-title">Investment Records</h5>
               <!-- Default Table -->
               <?php $counting=0; ?>
-              @if($investmentrecords != false)
+            
               <table class="table table-bordered">
                 <thead>
               
@@ -149,7 +151,9 @@
                     <th scope="col">Status</th>
                     <th scope="col"><center>Action</center></th>
                   </tr>
+                  @if($investmentrecordscount > 0)
               @foreach($investmentrecords as $row)
+             
               <?php $counting=$counting+1; ?>
               <?php $firstmonthdate = date('Y-m-d', strtotime($row['invest_date']. ' + 1 months'));?>
               <tr class="textcolor_body">
@@ -159,17 +163,25 @@
                     <td scope="col"><?php echo $row['tenure']; ?> Months</td>
                     <td scope="col"><?php echo $row['locked_period']; ?> Months</td>
                     <td scope="col"><?php echo $row['interestrate']; ?>%</td>
-                    <td scope="col"><?php if($row['approval'] == 1){ ?><font color="green">Approved</font><?php } else if($row['approval'] == 2){ ?><font color="red">Rejected</font><?php } else { ?><font color="blue">Pending</font><?php } ?></td>
-                    <td scope="col"><center>&nbsp;<?php if($row['approval'] == 1){ ?><span class="badge bg-danger">View Document</span><?php } ?><?php if($firstmonthdate < date('Y-m-d')){ ?><A href="#{{ $row['email']}}#{{$row['_id']}}" class="deletebuttoninvest"><span class="badge bg-danger">Delete</span></A><?php } ?><?php if(date('Y-m-d') >= date('Y-m-d',strtotime($row['maturitydate'])) && $row['paystatus'] != 1){ ?>&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="pay_or_reinvest"><span class="badge bg-danger">Pay</span></A>&nbsp;&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="reinvest"><span class="badge bg-primary">Re Investing</span></A><?php } else { if($row['investmentStatus'] == 'paid'){ echo "Paid on ".date('d-m-Y',strtotime($row['paydate']));} else if($row['investmentStatus'] == 'reinvested'){ echo "Re Invested"; }  } ?></center></td>
+                    <td scope="col"><?php if($row['approval'] == 1){ ?><font color="green">Approved <?php if($row['investmentStatus'] != 'paid' && $row['investmentStatus'] != 'reinvested'){ ?> and Processing<?php } else if($row['investmentStatus'] == 'paid'){ ?> and <?php echo "Paid on ".date('d-m-Y',strtotime($row['paydate'])); ?><?php } else { ?> and Re Invested <?php } ?></font><?php } else if($row['approval'] == 2){ ?><font color="red">Rejected</font><?php } else { ?><font color="blue">Pending</font><?php } ?></td>
+                    <td scope="col"><center>&nbsp;<?php if($row['approval'] == 1){ ?><A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="viewdocument" target="_block"><span class="badge bg-danger">View Document</span></A><?php } ?><?php if($firstmonthdate < date('Y-m-d') && $row['investmentStatus'] != 'paid' && $row['investmentStatus'] == 'reinvested'){ ?><A href="#{{ $row['client_email_id']}}#{{$row['_id']}}" class="deletebuttoninvest"><span class="badge bg-danger">Delete</span></A><?php } ?><?php if(date('Y-m-d') >= date('Y-m-d',strtotime($row['maturitydate'])) && $row['investmentStatus'] != 'paid' && $row['investmentStatus'] != 'reinvested'){ ?>&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="pay_or_reinvest"><span class="badge bg-danger">Pay</span></A>&nbsp;&nbsp;<A href="#<?php echo $row['client_email_id'].'#'.$row['_id']; ?>" class="reinvest"><span class="badge bg-primary">Re Investing</span></A><?php } ?></center></td>
                     
                   </tr>
               @endforeach
+              @else 
+              <tr class="textcolor_body">
+              <td scope="col" colspan="8"><center><font color="red">No Records Found..</font></center></td>
+             
+                    
+                  </tr>
+
+              @endif
            
                 </thead>
               
               </table>
              
-              @endif
+            
             </div>
           </div>
 
@@ -204,6 +216,12 @@
 <script>
 $(document).ready(function()
 {
+  $('.viewdocument').click(function()
+  {
+    var email=$(this).attr('href').split('#')[1];
+    var id=$(this).attr('href').split('#')[2];
+    window.open("{{URL::to('viewdocument')}}/"+email+"/"+id);
+  });
   $('.pay_or_reinvest').click(function()
   {
     var email=$(this).attr('href').split('#')[1];

@@ -58,6 +58,38 @@ class ClientController extends Controller
            // $employee=Employee::where('usertypeid',$request->session()->get('user_type_id'))->where('enteredmailid',$request->session()->get('email'))->get();
             return view('clients.addClients',['admins' => $admins,'employee' => $employee,'clientcode' => $clientcode,'clientnumber' => $clientnumber,'settingscount' => $settingscount,'settings' => $settings]);
     }
+    public function newinv(Request $request)
+    {
+            $admins=Secondaryadmin::all();
+            if($request->session()->exists('user_type'))
+            {
+                if($request->session()->get('user_type_id') == 1)
+                {
+                    $employee=employee::all();
+                }
+                else
+                {
+                    $employee=employee::all();
+                }
+
+            }
+            $clientcount=code::count();
+            if($clientcount > 0)
+            {
+                $clientcode=code::all()[0]->clientcode;
+                $clientnumber=code::all()[0]->clientcode_value;
+            }
+            else
+            {
+                $clientcode=0;
+                $clientnumber=0;
+            }
+            
+            $settingscount=settings::count();
+            $settings=settings::all();
+           // $employee=Employee::where('usertypeid',$request->session()->get('user_type_id'))->where('enteredmailid',$request->session()->get('email'))->get();
+            return view('clients.newinv',['admins' => $admins,'employee' => $employee,'clientcode' => $clientcode,'clientnumber' => $clientnumber,'settingscount' => $settingscount,'settings' => $settings]);
+    }
     public function editinvestingrecords($email,$id,Request $request)
     {
         if($request->session()->exists('user_type'))
@@ -317,32 +349,160 @@ class ClientController extends Controller
     public function reinvestmentPost(Request $request)
     {
         $request->validate([
-            'client_name' => 'required|email',
-            'investdate' => 'required|date',
-            'investamount' => 'required',
-            'lockperiod' => 'required|integer',
-            'returns' => 'required',
-            'tenure' => 'required',
+            'investdate' => 'required | date',
+            'interestrate' => 'required | integer',
+            'tenure' => 'required | integer',
         ]);
-       $investmentRecords=new investment();
-       $investmentRecords->client_email_id=$request->client_name;
-       $investmentRecords->invest_date=date('Y-m-d',strtotime($request->investdate));
-       $investmentRecords->invest_amount=$request->investamount;
-       $investmentRecords->locked_period=$request->lockperiod;
-       $investmentRecords->returns=$request->returns;
-       $investmentRecords->tenure=$request->tenure;
-       $investmentRecords->enteredmailid=$request->session()->get('email');
+        $settingscount=settings::count();
+        if($settingscount > 0)
+        {
+            $settings=settings::all()[0]['maturityperiod'];
+
+        }
+        else
+        {
+            $settings=0;
+        }
+        $maturitydate=date('Y-m-d',strtotime($request->investdate));
+        if($request->tenure > 0)
+        { 
+            for($i=0;$i<($request->tenure);$i++)
+            {
+                    $maturitydate = date('Y-m-d', strtotime($maturitydate. ' + 1 months'));
+               
+            }
+        }
+        $finisheddate=$maturitydate;
+        for($i=0;$i<($settings);$i++)
+        {
+                $maturitydate = date('Y-m-d',strtotime($maturitydate. ' + 1 months'));
+        }
+        $investmentRecords=new investment();
+        
+        $client=Client::where('email',$request->emailhide)->get();
+       
+        if($request->session()->get('user_type_id') == 1)
+        {
+            
+            $investmentRecords->admin_email_id=$client[0]->assignAdmin;
+            $investmentRecords->approval=1;
+            $investmentRecords->approvedby=$request->session()->get('email');
+            $investmentRecords->emp_email_id=$client[0]->assignEmployee;
+        }
+        else if($request->session()->get('user_type_id') == 2)
+        {
+            
+            $investmentRecords->admin_email_id=$client[0]->assignAdmin;
+            $investmentRecords->approval=1;
+            $investmentRecords->approvedby=$request->session()->get('email');
+            $investmentRecords->emp_email_id=$client[0]->assignEmployee;
+        }
+        else if($request->session()->get('user_type_id') == 3)
+        {
+            $investmentRecords->approval=0;
+            $investmentRecords->admin_email_id=$client[0]->assignAdmin;
+            $investmentRecords->emp_email_id=$client[0]->assignEmployee;
+        }
+    $investmentRecords->client_email_id=$client[0]->email;
+    $investmentRecords->client_code=$client[0]->client_code;
+    $investmentRecords->tenure=$request->tenure;
+    $investmentRecords->invest_amount=$request->investamount;
+    $investmentRecords->return_monthly=(($request->investamount)/100)*5;
+    $investmentRecords->return_overall=((($request->investamount)/100)*5)*$request->tenure; 
+    $investmentRecords->payable_amount=$request->investamount+(((($request->investamount)/100)*5)*$request->tenure); 
+    $investmentRecords->locked_period=$request->tenure+$settings;
+    $investmentRecords->invest_date=date('Y-m-d',strtotime($request->investdate));
+    $investmentRecords->finished_date=date('Y-m-d',strtotime($finisheddate));
+    $investmentRecords->maturitydate=date('Y-m-d',strtotime($maturitydate));
+    $investmentRecords->interestrate=$request->interestrate;
+    $investmentRecords->enteredmailid=$request->session()->get('email');
+    $investmentRecords->enteredid=$request->session()->get('loginId');
+    $investmentRecords->usertypeid=$request->session()->get('user_type_id');
+    $resu=$investmentRecords->save();
+    $investment_id=$investmentRecords->id;
+    investment::where('_id',$request->investmentid)->update(['investmentStatus' => 'reinvested','reinvestment_id' => $investment_id,'reinvestmentamount' => $request->investamount]);
+    return redirect('/processclients/'.$request->emailhide);
+
+    }
+    public function newclientspost(Request $request)
+    {
+       
+            $request->validate([
+                'investdate' => 'required | date',
+                'interestrate' => 'required | integer',
+                'investamount' => 'required',
+                'tenure' => 'required | integer',
+            ]);
+            $settingscount=settings::count();
+            if($settingscount > 0)
+            {
+                $settings=settings::all()[0]['maturityperiod'];
+    
+            }
+            else
+            {
+                $settings=0;
+            }
+            $maturitydate=date('Y-m-d',strtotime($request->investdate));
+            if($request->tenure > 0)
+            { 
+                for($i=0;$i<($request->tenure);$i++)
+                {
+                        $maturitydate = date('Y-m-d', strtotime($maturitydate. ' + 1 months'));
+                   
+                }
+            }
+            $finisheddate=$maturitydate;
+            for($i=0;$i<($settings);$i++)
+            {
+                    $maturitydate = date('Y-m-d',strtotime($maturitydate. ' + 1 months'));
+            }
+            $investmentRecords=new investment();
+            
+            $client=Client::where('email',$request->emailhide)->get();
+           
+            if($request->session()->get('user_type_id') == 1)
+            {
+                
+                $investmentRecords->admin_email_id=$client[0]->assignAdmin;
+                $investmentRecords->approval=1;
+                $investmentRecords->approvedby=$request->session()->get('email');
+                $investmentRecords->emp_email_id=$client[0]->assignEmployee;
+            }
+            else if($request->session()->get('user_type_id') == 2)
+            {
+                
+                $investmentRecords->admin_email_id=$client[0]->assignAdmin;
+                $investmentRecords->approval=1;
+                $investmentRecords->approvedby=$request->session()->get('email');
+                $investmentRecords->emp_email_id=$client[0]->assignEmployee;
+            }
+            else if($request->session()->get('user_type_id') == 3)
+            {
+                $investmentRecords->approval=0;
+                $investmentRecords->admin_email_id=$client[0]->assignAdmin;
+                $investmentRecords->emp_email_id=$client[0]->assignEmployee;
+            }
+        $investmentRecords->client_email_id=$client[0]->email;
+        $investmentRecords->client_code=$client[0]->client_code;
+        $investmentRecords->tenure=$request->tenure;
+        $investmentRecords->invest_amount=$request->investamount;
+        $investmentRecords->return_monthly=(($request->investamount)/100)*5;
+        $investmentRecords->return_overall=((($request->investamount)/100)*5)*$request->tenure; 
+        $investmentRecords->payable_amount=$request->investamount+(((($request->investamount)/100)*5)*$request->tenure); 
+        $investmentRecords->locked_period=$request->tenure+$settings;
+        $investmentRecords->invest_date=date('Y-m-d',strtotime($request->investdate));
+        $investmentRecords->finished_date=date('Y-m-d',strtotime($finisheddate));
+        $investmentRecords->maturitydate=date('Y-m-d',strtotime($maturitydate));
+        $investmentRecords->interestrate=$request->interestrate;
+        $investmentRecords->enteredmailid=$request->session()->get('email');
         $investmentRecords->enteredid=$request->session()->get('loginId');
         $investmentRecords->usertypeid=$request->session()->get('user_type_id');
-       $res=$investmentRecords->save();
-       if($res)
-       {
-          return back()->with('success','Investment Record Added'); 
-       }
-       else
-       {
-          return back()->with('fail','some Fields are Empty');
-       }
+        $resu=$investmentRecords->save();
+        $investment_id=$investmentRecords->id;
+        return redirect('/viewlastrecord/'.$request->emailhide.'/'.$investment_id);
+
+       
     }
     public function addClientsPost(Request $request)
     {
@@ -514,12 +674,15 @@ class ClientController extends Controller
     public function approvalfunction($email,$id,Request $request)
     {
         investment::where('admin_email_id',$request->session()->get('email'))->where('_id',$id)->update(['approval' => 1,'approvedby' => $request->session()->get('email')]);
-        return back()->with('success','Successfully Approved');    
+        //return back()->with('success','Successfully Approved');    
+        return redirect('/approvallist');
+        
     }
     public function rejectfunction($email,$id,Request $request)
     {
         investment::where('admin_email_id',$request->session()->get('email'))->where('_id',$id)->update(['approval' => 2,'approvedby' => $request->session()->get('email')]);
-        return back()->with('fail','Rejected');   
+        //return back()->with('fail','Rejected');   
+        return redirect('/approvallist');
     }
 
     public function viewlastrecord($email,$investid,Request $request)
@@ -534,16 +697,17 @@ class ClientController extends Controller
         {
             if($request->session()->get('user_type_id') == 1)
             {
-                $data=Client::all();
+                $data=Client::where('deletestatus','!=',1)->get();
             }
             else if($request->session()->get('user_type_id') == 2)
             {
-                $data=Client::where('assignAdmin',$request->session()->get('email'))->get();
+                $data=Client::where('assignAdmin',$request->session()->get('email'))->where('deletestatus','!=',1)->get();
             }
             else if($request->session()->get('user_type_id') == 3)
             {
-                $data=Client::where('assignEmployee',$request->session()->get('email'))->get();
+                $data=Client::where('assignEmployee',$request->session()->get('email'))->where('deletestatus','!=',1)->get();
             }
+            
             return view('Clients.viewClients',['data' => $data]);
         }
         else
@@ -626,9 +790,11 @@ class ClientController extends Controller
     }
     public function processclients($email,Request $request)
     {
-        $clientrecords=Client::where('email',$email)->get();
-        $investmentrecords=investment::where('client_email_id',$email)->get();
-        return view('clients.processclients',['email' => $email,'clientrecords' => $clientrecords,'investmentrecords' => $investmentrecords]);
+        $clientrecords=Client::where('email',$email)->where('deletestatus','!=',1)->get();
+        $clientrecordscount=Client::where('email',$email)->where('deletestatus','!=',1)->count();
+        $investmentrecords=investment::where('client_email_id',$email)->where('deletestatus','!=',1)->get();
+        $investmentrecordscount=investment::where('client_email_id',$email)->where('deletestatus','!=',1)->count();
+        return view('clients.processclients',['clientrecordscount' => $clientrecordscount,'investmentrecordscount' => $investmentrecordscount,'email' => $email,'clientrecords' => $clientrecords,'investmentrecords' => $investmentrecords]);
     }
     public function changeclientstatus($activestatus,$email,Request $request)
     {
@@ -645,7 +811,7 @@ class ClientController extends Controller
     }
     public function deleteclientpersonalinfo($email,Request $request)
     {
-       $investments=investment::where('client_email_id',$email)->count();
+       $investments=investment::where('client_email_id',$email)->where('deletestatus','!=',1)->count();
      
        if($investments > 0 )
        {
@@ -654,7 +820,7 @@ class ClientController extends Controller
        else
        {
         Client::where('email',$email)->update(['deletestatus' => 1]);
-        return redirect('/viewClients/');
+        return redirect('/processclients/'.$email);
        }
 
     }
@@ -680,9 +846,9 @@ class ClientController extends Controller
     public function payclients($email,$investmentid,Request $request)
     {
         
-        $investmentcount=investment::where('client_email_id',$email)->where('_id',$investmentid)->where('maturitydate' ,'>=',date('Y-m-d'))->count();
+        $investmentcount=investment::where('client_email_id',$email)->where('_id',$investmentid)->where('maturitydate' ,'<=',date('Y-m-d'))->count();
        
-        $investment=investment::where('client_email_id',$email)->where('_id',$investmentid)->where('maturitydate','>=',date('Y-m-d'))->get();
+        $investment=investment::where('client_email_id',$email)->where('_id',$investmentid)->where('maturitydate','<=',date('Y-m-d'))->get();
       
         $clients=Client::where('email',$email)->get();
         if($investmentcount > 0)
@@ -699,10 +865,46 @@ class ClientController extends Controller
     {
         return view('clients.notallowedtopay');
     }
-    public function newinv(Request $request)
+    public function clientlist(Request $request)
     {
-        $clients=Client::all();
-        return view('clients.newinv',['clients' => $clients]);
+        $clients=0;
+        if($request->session()->exists('user_type'))
+        {
+            if($request->session()->get('user_type_id') == 1)
+            {
+                $clients=Client::all();
+            }
+            else if($request->session()->get('user_type_id') == 1)
+            {
+                $clients=Client::where('assignAdmin',$request->session()->get('email'))->get();
+            }
+            else
+            {
+                $clients=Client::where('assignEmployee',$request->session()->get('email'))->get();
+            }
+        }
+        echo json_encode($clients);
+        
+    }
+    public function clientlist_par($email,Request $request)
+    {
+        $clients=0;
+        if($request->session()->exists('user_type'))
+        {
+            if($request->session()->get('user_type_id') == 1)
+            {
+                $clients=Client::where('email',$email)->get();
+            }
+            else if($request->session()->get('user_type_id') == 1)
+            {
+                $clients=Client::where('email',$email)->where('assignAdmin',$request->session()->get('email'))->get();
+            }
+            else
+            {
+                $clients=Client::where('email',$email)->where('assignEmployee',$request->session()->get('email'))->get();
+            }
+        }
+        echo json_encode($clients);
     }
    
  

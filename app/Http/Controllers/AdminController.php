@@ -53,25 +53,72 @@ class AdminController extends Controller
     {
         if($request->session()->exists('user_type')) 
         {
-            $secondaryadmins=Secondaryadmin::count();
-            $clients=Client::count();
-            $employees=employee::count();
-            $investments=investment::where('approval',1)->count();
-           
-            $investmentsamount=investment::where('approval',1)->get();
-            $r_investmentsamount=investment::where('approval',2)->count();
-            $awaitinginvestments=investment::where('approval',0)->count();
-           
-          
-            $amount=0;
-            if($investmentsamount != false)
+            if($request->session()->get('user_type_id') == 1)
             {
-                foreach($investmentsamount as $row)
+                $secondaryadmins=Secondaryadmin::count();
+                $clients=Client::count();
+                $employees=employee::count();
+                $investments=investment::where('approval',1)->count();
+               
+                $investmentsamount=investment::where('approval',1)->get();
+                $r_investmentsamount=investment::where('approval',2)->count();
+                $awaitinginvestments=investment::where('approval',0)->count();
+               
+              
+                $amount=0;
+                if($investmentsamount != false)
                 {
-                    $amount=$amount+$row['invest_amount'];
+                    foreach($investmentsamount as $row)
+                    {
+                        $amount=$amount+$row['invest_amount'];
+                    }
+                }
+                return view('others.dashboard',['awaiting' => $awaitinginvestments,'r_investmentsamount' => $r_investmentsamount,'investmentsamount' => $amount,'investments' => $investments,'secondaryadmins' => $secondaryadmins,'clients' => $clients,'employees' => $employees]);
+            }
+            else if($request->session()->get('user_type_id') == 2)
+            {
+               
+                $clients=Client::where('assignAdmin',$request->session()->get('email'))->count();
+                $employees=employee::where('assignAdmin',$request->session()->get('email'))->count();
+                $investments=investment::where('admin_email_id',$request->session()->get('email'))->where('approval',1)->count();
+               
+                $investmentsamount=investment::where('admin_email_id',$request->session()->get('email'))->where('approval',1)->get();
+                $r_investmentsamount=investment::where('admin_email_id',$request->session()->get('email'))->where('approval',2)->count();
+                $awaitinginvestments=investment::where('admin_email_id',$request->session()->get('email'))->where('approval',0)->count();
+               
+              
+                $amount=0;
+                if($investmentsamount != false)
+                {
+                    foreach($investmentsamount as $row)
+                    {
+                        $amount=$amount+$row['invest_amount'];
+                    }
+                }
+                return view('others.dashboard',['awaiting' => $awaitinginvestments,'r_investmentsamount' => $r_investmentsamount,'investmentsamount' => $amount,'investments' => $investments,'clients' => $clients,'employees' => $employees]);
+            }
+            else
+            {
+                $clients=Client::where('assignEmployee',$request->session()->get('email'))->count();
+               
+                $investments=investment::where('enteredmailid',$request->session()->get('email'))->where('approval',1)->count();
+               
+                $investmentsamount=investment::where('enteredmailid',$request->session()->get('email'))->where('approval',1)->get();
+                $r_investmentsamount=investment::where('enteredmailid',$request->session()->get('email'))->where('approval',2)->count();
+                $awaitinginvestments=investment::where('enteredmailid',$request->session()->get('email'))->where('approval',0)->count();
+               
+              
+                $amount=0;
+                if($investmentsamount != false)
+                {
+                    foreach($investmentsamount as $row)
+                    {
+                        $amount=$amount+$row['invest_amount'];
+                    }
                 }
             }
-           return view('others.dashboard',['awaiting' => $awaitinginvestments,'r_investmentsamount' => $r_investmentsamount,'investmentsamount' => $amount,'investments' => $investments,'secondaryadmins' => $secondaryadmins,'clients' => $clients,'employees' => $employees]);
+            return view('others.dashboard',['awaiting' => $awaitinginvestments,'r_investmentsamount' => $r_investmentsamount,'investmentsamount' => $amount,'investments' => $investments,'clients' => $clients]);
+           
         }
         else
         {
